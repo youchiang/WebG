@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-10-22T08:58:08.945Z",
+  "tests": [
+    {
+      "id": "m4_smash_hit_stop",
+      "hitStop0": 40,
+      "hitStop1": 23.33,
+      "shuttleFrozen": true,
+      "shuttleResumed": true,
+      "passed": true
+    },
+    {
+      "id": "m4_fov_punch_and_recovery",
+      "impactFov": 74,
+      "midFov": 78.02,
+      "recoveredFov": 79.89,
+      "fovPunched": true,
+      "fovRecovering": true,
+      "passed": true
+    },
+    {
+      "id": "m4_trauma_camera_shake",
+      "trauma": 0.9,
+      "cameraShake": 0.82,
+      "shakeOffset": [
+        0.02,
+        0.04,
+        0.01
+      ],
+      "shakeRoll": 0.02,
+      "decayedShake": 0,
+      "passed": true
+    },
+    {
+      "id": "m4_shockwave_vfx",
+      "initialActive": true,
+      "shockwaveColor": "#FF3D00",
+      "midScale": 1.82,
+      "midAlpha": 0.63,
+      "endedActive": false,
+      "passed": true
+    },
+    {
+      "id": "m4_audio_telemetry",
+      "smashAudio": {
+        "type": "strike",
+        "shotType": "SMASH",
+        "quality": "sweet_spot",
+        "speedKmh": 230,
+        "volumeDb": 0,
+        "peakFreq": 2800,
+        "timestamp": 5713.5
+      },
+      "floorAudio": {
+        "type": "floor",
+        "detail": {
+          "pos": [
+            0.15,
+            0.04,
+            -3.7867225794786976
+          ],
+          "inBounds": true
+        },
+        "volumeDb": -5,
+        "peakFreq": 340,
+        "timestamp": 5738.9000000059605
+      },
+      "passed": true
+    }
+  ],
+  "consoleErrors": []
+}

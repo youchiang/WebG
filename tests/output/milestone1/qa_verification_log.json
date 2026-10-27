@@ -1,0 +1,43 @@
+{
+  "milestone": 1,
+  "qa_auditor": "Independent QA Tester Sub-Agent",
+  "audit_version": "v2 - Sports Arena Anti-Glare Update",
+  "audit_timestamp": "2026-10-22T03:36:00Z",
+  "overall_verdict": "QA_PASSED",
+  "user_feedback_addressed": "牆壁太白了會影響整個視覺 請參考體育場館的方式 (Redesigned from plain white walls to multi-tier realistic sports arena)",
+  "whitebox_code_audit": {
+    "anti_shortcut_status": "PASSED - Authentic Three.js procedural materials and geometry, no mocks, no hardcoded values",
+    "arena_architecture_compliance": {
+      "upper_walls": "Soft Mist Steel-Blue modular acoustic panels (#9FB3C8 to #93A8BE) with sound-absorption micro-perforations",
+      "mid_walls": "Warm natural oak acoustic slat band (#D4B996 with #9C7D57 grooves and oak rails)",
+      "lower_walls": "Sporty Slate-Blue padded dado wall (#5C7C99) with cushion stitch seams (0m to 2.2m)",
+      "perimeter_barriers": "BWF World Tour Cerulean/Slate A-boards (#4F7393) with ivory top trim (#F1F5F9)",
+      "roof_and_lighting": "Steel structural trusses (#9AA8BC) and downward LED gymnasium diffusers (#EBF3FA), non-glare calibrated lighting",
+      "net_contrast": "White net top tape (#FFFFFF) and mesh achieve 100% sharp contrast against steel-blue/slate background",
+      "court_mat_and_lines": "BWF mint green PVC (#98C9A3) with 2.5mm raised 3D pure white lines (#FFFFFF)"
+    },
+    "controls_and_input": {
+      "pointer_lock": "Implemented via requestCanvasPointerLock() with headless fallback calculation",
+      "fullscreen": "Implemented via KeyF handler",
+      "pause_and_unlock": "Implemented via Escape key handler and canvas click resume",
+      "quadrant_state_machine": "All 4 quadrants tested & verified: Q1 (Forehand high), Q2 (Backhand high), Q3 (Backhand low), Q4 (Forehand low) with [-15px, +15px] hysteresis deadzone"
+    },
+    "testing_hooks": {
+      "render_game_to_text": "Real Three.js camera/player/opponent/shuttle state serialization",
+      "advanceTime": "Deterministic 60Hz fixed-step integration"
+    }
+  },
+  "blackbox_visual_inspection": {
+    "screenshots_verified": [
+      "d:/AGYWorkspace/WebG/tests/output/milestone1/shot-0.png"
+    ],
+    "visual_fidelity_check": {
+      "white_wall_glare_eliminated": true,
+      "arena_multi_tier_architecture_visible": true,
+      "net_and_lines_contrast_crisp": true,
+      "quadrant_hud_overlay_accurate": true,
+      "blank_canvas_detected": false
+    },
+    "console_errors_count": 0
+  }
+}

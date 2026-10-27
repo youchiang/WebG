@@ -1,0 +1,62 @@
+{
+  "milestone": 2,
+  "title": "Badminton Physics Engine & Tactical High-Contrast Outline",
+  "status": "QA_PASSED",
+  "testScenarios": [
+    {
+      "id": "clear",
+      "name": "CLEAR Shot (High Arc, Parachute Drop, Normal Navy Outline)",
+      "exitSpeed": "52.0 m/s",
+      "apexHeight": "5.12 m",
+      "terminalVelocity": "6.75 m/s",
+      "outline": "normal_navy (#1E293B / #FF5722)",
+      "landing": "Player baseline [0, 5.88], inBounds: true",
+      "status": "PASSED"
+    },
+    {
+      "id": "smash",
+      "name": "SMASH Shot (68 m/s, Fiery Orange-Gold Smash Flame Outline, Rapid Decay)",
+      "exitSpeed": "68.0 m/s",
+      "deceleration": "~994 m/s^2 quadratic drag",
+      "outline": "smash_flame (#FF3D00 / #FFB300) with 12Hz pulse",
+      "landing": "Player midcourt [0, 3.15], inBounds: true",
+      "status": "PASSED"
+    },
+    {
+      "id": "drop",
+      "name": "DROP Shot (29 m/s, Soft Cyan Outline, Front Court Drop)",
+      "exitSpeed": "29.0 m/s",
+      "outline": "drop_cyan (#00B0FF / #E0F7FA)",
+      "landing": "Front court [0, 2.15], inBounds: true",
+      "status": "PASSED"
+    },
+    {
+      "id": "drive",
+      "name": "DRIVE Shot (44 m/s, Flat Skimming Low Over Net)",
+      "exitSpeed": "44.0 m/s",
+      "outline": "normal_navy",
+      "status": "PASSED"
+    },
+    {
+      "id": "net_shot",
+      "name": "NET_SHOT (12.5 m/s, Delicate Hairpin Tumbling Across Net Tape)",
+      "exitSpeed": "12.5 m/s",
+      "outline": "drop_cyan",
+      "status": "PASSED"
+    },
+    {
+      "id": "sweet_spot",
+      "name": "Dynamic Sweet Spot Hit Indicator",
+      "condition": "z in [1.2, 4.5], y in [0.6, 2.8], vz > 0",
+      "outline": "sweet_spot_green (#00E676 / #B9F6CA) with 8Hz pulse",
+      "status": "PASSED"
+    },
+    {
+      "id": "ccd_net",
+      "name": "Continuous Collision Detection (Z = 0 Net Plane)",
+      "tapeDeflection": "hitNet = 'tape' (65% horizontal velocity dampening + upward pop)",
+      "meshBounce": "hitNet = 'mesh' (negative bounce vz * -0.15)",
+      "status": "PASSED"
+    }
+  ]
+}

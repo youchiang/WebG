@@ -1,0 +1,157 @@
+{
+  "timestamp": "2026-10-22T08:11:09.909Z",
+  "tests": [
+    {
+      "id": "m3_q1_smash",
+      "hit": true,
+      "shotType": "SMASH",
+      "speedKmh": 240,
+      "timingQuality": "sweet_spot",
+      "racketFaceNormal": [
+        0.26,
+        -0.3,
+        -0.92
+      ],
+      "shuttleMidFlightPos": [
+        0.07,
+        0.38,
+        -2.81
+      ]
+    },
+    {
+      "id": "m3_q2_backhand_flip",
+      "hit": true,
+      "quadrant": "Q2",
+      "grip": "backhand",
+      "shotType": "DROP",
+      "speedKmh": 50
+    },
+    {
+      "id": "m3_q3_lift",
+      "hit": true,
+      "quadrant": "Q3",
+      "grip": "backhand",
+      "shotType": "LIFT",
+      "speedKmh": 98
+    },
+    {
+      "id": "m3_q4_drive",
+      "hit": true,
+      "quadrant": "Q4",
+      "grip": "forehand",
+      "shotType": "DRIVE",
+      "speedKmh": 79
+    },
+    {
+      "id": "m3_all_7_shots",
+      "shots": [
+        {
+          "shotType": "CLEAR",
+          "hit": true,
+          "recordedShotType": "CLEAR",
+          "recordedSpeedKmh": 128,
+          "shuttlePos": [
+            0.15,
+            4.86,
+            -0.56
+          ],
+          "shuttleSpeed": 9.59
+        },
+        {
+          "shotType": "SMASH",
+          "hit": true,
+          "recordedShotType": "SMASH",
+          "recordedSpeedKmh": 230,
+          "shuttlePos": [
+            0.15,
+            0.04,
+            -3.76
+          ],
+          "shuttleSpeed": 0
+        },
+        {
+          "shotType": "ATTACKING_CLEAR",
+          "hit": true,
+          "recordedShotType": "ATTACKING_CLEAR",
+          "recordedSpeedKmh": 117,
+          "shuttlePos": [
+            0.15,
+            4.02,
+            -1.05
+          ],
+          "shuttleSpeed": 9.55
+        },
+        {
+          "shotType": "DROP",
+          "hit": true,
+          "recordedShotType": "DROP",
+          "recordedSpeedKmh": 52,
+          "shuttlePos": [
+            0.15,
+            2.48,
+            0.02
+          ],
+          "shuttleSpeed": 7.56
+        },
+        {
+          "shotType": "DRIVE",
+          "hit": true,
+          "recordedShotType": "DRIVE",
+          "recordedSpeedKmh": 85,
+          "shuttlePos": [
+            0.15,
+            1.58,
+            -1.77
+          ],
+          "shuttleSpeed": 8.53
+        },
+        {
+          "shotType": "NET_SHOT",
+          "hit": true,
+          "recordedShotType": "NET_SHOT",
+          "recordedSpeedKmh": 21,
+          "shuttlePos": [
+            0.15,
+            1.71,
+            -0.51
+          ],
+          "shuttleSpeed": 3.68
+        },
+        {
+          "shotType": "LIFT",
+          "hit": true,
+          "recordedShotType": "LIFT",
+          "recordedSpeedKmh": 121,
+          "shuttlePos": [
+            0.15,
+            4.16,
+            -2.3
+          ],
+          "shuttleSpeed": 10.26
+        }
+      ]
+    },
+    {
+      "id": "m3_pure_mouse_swipe_no_click",
+      "pureSwipeHit": true,
+      "velZ": -9.58,
+      "lastShotType": "CLEAR",
+      "lastShotSpeedKmh": 135,
+      "shuttlePos": [
+        0.17,
+        5.31,
+        -0.33
+      ]
+    },
+    {
+      "id": "m3_outer_edge_performance",
+      "speedStaysCalm": true,
+      "swipeSpeed": 54,
+      "virtualCursor": [
+        360,
+        -186
+      ]
+    }
+  ],
+  "consoleErrors": []
+}

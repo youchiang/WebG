@@ -1,0 +1,90 @@
+{
+  "milestone": 3,
+  "qa_auditor": "Independent QA Tester Sub-Agent",
+  "audit_version": "v1.0 - First-Person Racket Viewmodel & 4-Quadrant Swipe Physics",
+  "audit_timestamp": "2026-10-22T06:30:00Z",
+  "overall_verdict": "QA_PASSED",
+  "whitebox_code_audit": {
+    "anti_shortcut_status": "PASSED - Authentic 3D viewmodel geometry, quaternion slerp grip flipping, and mouse swipe physics without hardcoded mock data",
+    "viewmodel_architecture_verification": {
+      "racket_head": "Isometric oval head (0.10m x 0.128m TubeGeometry) in carbon composite (#1E293B) with aerodynamic coral/cyan wing accents",
+      "string_bed": "14 vertical mains + 16 horizontal crosses (LineSegments) with center coral logo and outer white strings",
+      "shaft_and_handle": "Built-in T-joint, 0.22m slim carbon shaft (radius 3.5mm), cone, white synthetic grip (0.165m), octagonal butt cap",
+      "player_arm_and_wristband": "Coaxial forearmPivot at butt cap center (0, -0.085, 0) hosting coral athletic wristband (#FF5722) and warm skin-tone forearm (#D6A786, 0.28m) seamlessly attached without floating gap in both Forehand and Backhand",
+      "thumb_morphing": "3D thumb mesh slides smoothly between Forehand side-wrap and Backhand thumb-up ridge pressing the rear cone flat",
+      "swing_arc_ribbon": "16-segment dynamic quad-strip mesh with additive blending, dynamically colored (smash flame gold, drop cyan, clear white)",
+      "smooth_pose_slerp": "Frame-rate independent exponential smoothing (smoothFactor = 1.0 - exp(-14.0 * dt)) interpolating pos.lerp and quat.slerp between Forehand (Q1/Q4) and Backhand (Q2/Q3 with +26 deg leftward tilt)",
+      "dynamic_cursor_tilt": "Virtual cursor drives dynamic face loft (pitch: up to ±0.32 rad) and yaw (up to ±0.26 rad) for accurate shot aiming"
+    },
+    "mouse_swipe_physics_verification": {
+      "swipe_tracker": "120ms sliding window buffer computing continuous swipe velocity (px/s), dx, dy",
+      "grip_power_multiplier": "Forehand Q1/Q4 = 1.0, Backhand Q2/Q3 = 0.85 (calibrated for BWF tournament play)",
+      "seven_shot_types_mapped": {
+        "SMASH": {
+          "trigger": "High quadrant (Q1/Q2) + downward swipe (dy < -35px) + fast swipe >= 1400 px/s",
+          "exit_speed": "58.0 ~ 72.0 m/s * gripPower (~209 ~ 259 km/h)",
+          "elevation": "-22.5° ~ -24.5° downward dive",
+          "outline": "smash_flame",
+          "trajectory": "Crosses net at Y > 1.55m, lands in opponent midcourt (Z ~ -1.2m)"
+        },
+        "CLEAR": {
+          "trigger": "Upward swipe (dy > 35px) + fast swipe >= 1250 px/s",
+          "exit_speed": "34.0 ~ 37.5 m/s * gripPower",
+          "elevation": "31.0° ~ 34.0° high parabola",
+          "outline": "normal_navy",
+          "trajectory": "Apex ~5.2m, parachute steep drop landing on opponent baseline (Z ~ -5.8m)"
+        },
+        "ATTACKING_CLEAR": {
+          "trigger": "Upward swipe (dy > 20px) + moderate swipe [950, 1250) px/s",
+          "exit_speed": "31.0 ~ 34.0 m/s * gripPower",
+          "elevation": "22.0° ~ 24.5° flat rushing clear",
+          "outline": "normal_navy",
+          "trajectory": "Rushes over net, lands in opponent backcourt (Z ~ -5.2m)"
+        },
+        "DROP": {
+          "trigger": "High quadrant + downward slice (dy < -15px) + moderate speed [400, 1400) px/s",
+          "exit_speed": "13.0 ~ 15.5 m/s",
+          "elevation": "7.0° ~ 9.0° tight skim",
+          "outline": "drop_cyan",
+          "trajectory": "Skims over net tape, drops sharply into opponent frontcourt (Z ~ -2.1m)"
+        },
+        "DRIVE": {
+          "trigger": "Horizontal swipe (|dx| >= |dy| * 0.85) + speed >= 900 px/s",
+          "exit_speed": "21.5 ~ 26.0 m/s * gripPower",
+          "elevation": "4.2° ~ 5.7° flat skimming angle",
+          "outline": "normal_navy",
+          "trajectory": "Skims low over net, lands in opponent midcourt (Z ~ -3.8m)"
+        },
+        "NET_SHOT": {
+          "trigger": "Gentle slow touch (< 550 px/s)",
+          "exit_speed": "5.2 ~ 6.6 m/s",
+          "elevation": "30.0° ~ 32.5° delicate tumble",
+          "outline": "drop_cyan",
+          "trajectory": "Hairpin curve right over net tape, lands close to net on opponent side (Z ~ -0.8m)"
+        },
+        "LIFT": {
+          "trigger": "Low quadrant (Q3/Q4) + upward swipe (dy > 25px) + speed >= 750 px/s",
+          "exit_speed": "32.0 ~ 35.8 m/s * gripPower",
+          "elevation": "36.5° ~ 41.0° high defensive parabola",
+          "outline": "normal_navy",
+          "trajectory": "High defensive arch, lands near opponent baseline (Z ~ -5.6m)"
+        }
+      },
+      "strike_window_detection": "Z in [0.35m, 6.6m], Y in [0.15m, 3.45m] with vel.z > 0; SWEET_SPOT window when Z in [1.5m, 4.6m] and Y in [0.7m, 3.2m]",
+      "pure_mouse_swipe_no_click": "VERIFIED - mousemove with swipeSpeed >= 240 px/s triggers executePlayerStrike without requiring isMouseDown; continuous contact detection in main.js update() connects pre-swings and live swipes seamlessly; mid-air practice swings animate 3D racket without teleporting out-of-range shuttles",
+      "outer_edge_performance": "VERIFIED - raw mouse coordinate tracking (lastRawX, lastRawY) completely eliminates clamp differential explosion at viewport boundaries; far-corner wiggle at (1260, 700) measures calm 54 px/s instead of 20,000+ px/s",
+      "ballistic_direction": "Player strike directs shuttle with negative Z (-speed * cos(elev) * cos(azim)) toward opponent court"
+    }
+  },
+  "layered_architecture_compliance": {
+    "root_cleanliness": "Spotless root and src root maintained",
+    "structure": {
+      "core": "src/core/constants.js, src/core/gameState.js",
+      "physics": "src/physics/shuttlePhysics.js, src/physics/racketPhysics.js",
+      "rendering": "src/rendering/shaders/shuttleOutlineShader.js, src/rendering/entities/shuttlecockEntity.js, src/rendering/entities/racketViewmodel.js, src/rendering/entities/badmintonArena.js",
+      "input": "src/input/pointerController.js",
+      "ui": "src/ui/hudOverlay.js",
+      "tests": "tests/runners/run_m3_qa.js, tests/output/milestone3/"
+    }
+  }
+}

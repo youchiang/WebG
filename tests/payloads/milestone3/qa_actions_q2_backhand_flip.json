@@ -1,0 +1,33 @@
+{
+  "testId": "m3_q2_backhand_flip",
+  "description": "Cursor transition from Q1 to Q2 verifying ~165 degree slerp flip, Backhand grip and 0.85 power penalty",
+  "steps": [
+    {
+      "action": "start_match",
+      "frames": 10
+    },
+    {
+      "action": "move_cursor",
+      "target": [80, 60],
+      "frames": 10
+    },
+    {
+      "action": "move_cursor",
+      "target": [-120, 80],
+      "frames": 25
+    },
+    {
+      "action": "verify_grip",
+      "expectedGrip": "backhand",
+      "expectedQuadrant": "Q2"
+    },
+    {
+      "action": "swipe",
+      "quadrant": "Q2",
+      "dx": -40,
+      "dy": -80,
+      "speed": 620,
+      "frames": 20
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "steps": [
+    {
+      "buttons": ["left_mouse_button"],
+      "frames": 5
+    },
+    {
+      "keys": ["Digit4"],
+      "frames": 15
+    },
+    {
+      "frames": 25
+    }
+  ]
+}

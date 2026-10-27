@@ -1,0 +1,209 @@
+{
+  "timestamp": "2026-10-22T06:05:54.601Z",
+  "tests": [
+    {
+      "id": "clear",
+      "name": "CLEAR Shot (High Arc, Parachute Drop, Normal Navy Outline)",
+      "midFlight": {
+        "pos": [
+          0,
+          4.88,
+          1.27
+        ],
+        "speed": 8.27,
+        "outlineState": "normal_navy",
+        "landingTarget": [
+          0,
+          6.27
+        ],
+        "timeToLand": 1.42,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          0,
+          0.04,
+          6.35
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "smash",
+      "name": "SMASH Shot (68 m/s, Fiery Orange-Gold Smash Flame Outline, Rapid Decay)",
+      "midFlight": {
+        "pos": [
+          0,
+          0.22,
+          3.01
+        ],
+        "speed": 16.13,
+        "outlineState": "smash_flame",
+        "landingTarget": [
+          0,
+          3.42
+        ],
+        "timeToLand": 0.03,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          0,
+          0.04,
+          3.34
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "drop",
+      "name": "DROP Shot (13.8 m/s, Soft Cyan Outline, Front Court Drop)",
+      "midFlight": {
+        "pos": [
+          0.11,
+          2.21,
+          0.67
+        ],
+        "speed": 6.28,
+        "outlineState": "drop_cyan",
+        "landingTarget": [
+          0.03,
+          2.96
+        ],
+        "timeToLand": 0.56,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          0.03,
+          0.04,
+          2.97
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "drive",
+      "name": "DRIVE Shot (22 m/s, Flat Skimming Low Over Net)",
+      "midFlight": {
+        "pos": [
+          0.11,
+          1.51,
+          1.78
+        ],
+        "speed": 8.44,
+        "outlineState": "normal_navy",
+        "landingTarget": [
+          -0.03,
+          4.37
+        ],
+        "timeToLand": 0.46,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          -0.03,
+          0.04,
+          4.4
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "net_shot",
+      "name": "NET_SHOT (5.2 m/s, Delicate Hairpin Tumbling Across Net Tape)",
+      "midFlight": {
+        "pos": [
+          -0.17,
+          1.55,
+          0.67
+        ],
+        "speed": 3.47,
+        "outlineState": "drop_cyan",
+        "landingTarget": [
+          -0.11,
+          1.85
+        ],
+        "timeToLand": 0.46,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          -0.11,
+          0.04,
+          1.86
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "sweet_spot",
+      "name": "SWEET SPOT Indicator Transition (Dynamic Emerald Green Outline in Hit Zone)",
+      "midFlight": {
+        "pos": [
+          -0.25,
+          1.46,
+          2.33
+        ],
+        "speed": 7.51,
+        "outlineState": "sweet_spot_green",
+        "landingTarget": [
+          -0.37,
+          4.59
+        ],
+        "timeToLand": 0.43,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          -0.37,
+          0.04,
+          4.57
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": null
+      }
+    },
+    {
+      "id": "net_collision",
+      "name": "CCD Net Collision (Tape Deflection & Mesh Bounce Detection)",
+      "midFlight": {
+        "pos": [
+          -0.18,
+          1.21,
+          -0.54
+        ],
+        "speed": 3.07,
+        "outlineState": "normal_navy",
+        "landingTarget": [
+          -0.26,
+          -1.23
+        ],
+        "timeToLand": 0.35,
+        "inFlight": true
+      },
+      "landing": {
+        "pos": [
+          -0.26,
+          0.04,
+          -1.22
+        ],
+        "inFlight": false,
+        "inBounds": true,
+        "hitNet": "mesh"
+      }
+    }
+  ],
+  "consoleErrors": []
+}

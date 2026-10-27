@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Badminton 3D — 極簡第一人稱 3D 羽球</title>
+    <link rel="stylesheet" href="/src/ui/style.css" />
+  </head>
+  <body>
+    <div id="app-container">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- Minimalist Top Status Pill (HTML layer synced with Canvas HUD) -->
+      <header id="top-hud" class="hud-pill hidden" aria-live="polite">
+        <div class="hud-item">
+          <span class="hud-label">MODE</span>
+          <button id="hud-mode-btn" class="hud-badge mode-badge" type="button">AI 對戰 [M]</button>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+          <span class="hud-label">SCORE</span>
+          <span id="hud-score" class="hud-value">0 : 0</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+          <span class="hud-label">QUADRANT</span>
+          <span id="hud-quadrant" class="hud-badge">Q1 · 正拍 (Forehand)</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+          <span class="hud-label">CURSOR</span>
+          <span id="hud-cursor" class="hud-mono">(0, 0)</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+          <span class="hud-label">SHUTTLE</span>
+          <span id="hud-shuttle" class="hud-badge">CLEAR · 0 km/h</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item hud-hint">
+          <span><strong>WASD</strong> 走位</span>
+          <span><strong>Space</strong> 起跳扣殺</span>
+          <span><strong>M</strong> 切換對戰/發球機</span>
+          <span><strong>1-7</strong> 測試球路</span>
+        </div>
+      </header>
+
+      <!-- Frosted Glass Start / Pause Screen -->
+      <section id="start-screen" class="overlay-card">
+        <div class="brand-tag">NORDIC CLEAN COURT · FIRST-PERSON 3D</div>
+        <h1>Web Badminton 3D</h1>
+        <p class="subtitle">
+          第一人稱指標鎖定（Pointer Lock）× 四象限軌跡揮拍羽球對戰
+        </p>
+
+        <div class="quadrant-guide">
+          <div class="quad-box backhand">
+            <span class="quad-id">Q2 左上</span>
+            <span class="quad-desc">反拍高球 / 擋殺</span>
+          </div>
+          <div class="quad-box forehand">
+            <span class="quad-id">Q1 右上</span>
+            <span class="quad-desc">正拍高遠 / 重殺</span>
+          </div>
+          <div class="quad-box backhand">
+            <span class="quad-id">Q3 左下</span>
+            <span class="quad-desc">反拍放網 / 抽挑</span>
+          </div>
+          <div class="quad-box forehand">
+            <span class="quad-id">Q4 右下</span>
+            <span class="quad-desc">正拍平抽 / 切放</span>
+          </div>
+        </div>
+
+        <ul class="controls-list">
+          <li><strong>WASD / 方向鍵</strong>：手動微調步伐走位（放開自動半自動攔截補位）</li>
+          <li><strong>Space 空白鍵</strong>：起跳扣殺（Jump Smash，滯空時殺球威力加乘 1.08x、下傾角 -25.5°）</li>
+          <li><strong>M 鍵</strong>：切換「AI 對手單人對戰模式」與「發球機多球路訓練模式」</li>
+          <li><strong>滑鼠移動</strong>：以畫面中心 <code>(0,0)</code> 切換四象限正反拍（~165° 翻轉）與揮拍仰俯角度</li>
+          <li><strong>滑鼠快速滑動（純揮動擊球）</strong>：無需點擊！當羽球迎面飛入擊球區時直接揮動即可回擊</li>
+          <li><strong>數字鍵 1~7</strong>：立即測試 7 大經典球路　｜　<strong>F 鍵</strong>：全螢幕　｜　<strong>Esc</strong>：暫停</li>
+        </ul>
+
+        <button id="start-btn" type="button">點擊開始比賽 / 鎖定滑鼠</button>
+      </section>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

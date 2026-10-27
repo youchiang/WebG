@@ -1,0 +1,33 @@
+{
+  "testId": "m3_q4_drive",
+  "description": "Cursor in Q4 executing horizontal swipe for flat fast Forehand DRIVE skimming net",
+  "steps": [
+    {
+      "action": "start_match",
+      "frames": 10
+    },
+    {
+      "action": "move_cursor",
+      "target": [130, -60],
+      "frames": 15
+    },
+    {
+      "action": "verify_grip",
+      "expectedGrip": "forehand",
+      "expectedQuadrant": "Q4"
+    },
+    {
+      "action": "swipe",
+      "quadrant": "Q4",
+      "dx": 180,
+      "dy": -10,
+      "speed": 820,
+      "shotType": "DRIVE",
+      "frames": 25
+    },
+    {
+      "action": "advance_flight",
+      "frames": 35
+    }
+  ]
+}

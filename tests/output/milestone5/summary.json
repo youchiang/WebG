@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-10-27T03:48:18.004Z",
+  "tests": [
+    {
+      "id": "m5_auto_footwork_and_wasd",
+      "autoPosX": 0.4,
+      "autoFootworkState": "intercepting",
+      "manualPos": [
+        -0.7,
+        0,
+        3.08
+      ],
+      "manualFootworkState": "manual",
+      "inBounds": true,
+      "passed": true
+    },
+    {
+      "id": "m5_jump_smash_combo",
+      "jumpTriggered": true,
+      "jumpHeight": 0.94,
+      "isJumping": true,
+      "lastJumpSmash": true,
+      "smashSpeedKmh": 249,
+      "fov": 74,
+      "passed": true
+    },
+    {
+      "id": "m5_ai_opponent_rally_and_scoring",
+      "aiSwungOrReturned": true,
+      "rallyCount": 1,
+      "lastReturnType": "SMASH",
+      "playerScore": 1,
+      "lastWinner": "player",
+      "passed": true
+    },
+    {
+      "id": "m5_feeder_training_mode",
+      "setMode": "feeder",
+      "playMode": "feeder",
+      "opponentState": "feeder",
+      "telegraphData": {
+        "chargingSmash": true,
+        "intendedShot": "SMASH",
+        "opponentHeight": 0.59,
+        "lastAudioEvent": {
+          "type": "smash_warning",
+          "volumeDb": -10,
+          "peakFreq": 780,
+          "timestamp": 1793072913064
+        }
+      },
+      "smashLaunched": {
+        "shotType": "SMASH",
+        "speed": 36,
+        "speedKmh": 130,
+        "chargingSmashAfterLaunch": false
+      },
+      "passed": true
+    },
+    {
+      "id": "m5_offscreen_indicator",
+      "indicator": {
+        "active": true,
+        "ndcX": -0.23,
+        "ndcY": 397.82,
+        "angleRad": 1.57,
+        "heightM": 6.36,
+        "distanceM": 4.6
+      },
+      "passed": true
+    }
+  ],
+  "consoleErrors": []
+}

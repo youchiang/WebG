@@ -1,0 +1,13 @@
+{
+  "testId": "m3_all_7_shots",
+  "description": "Sequential test of all 7 badminton shot ballistics: CLEAR, SMASH, ATTACKING_CLEAR, DROP, DRIVE, NET_SHOT, LIFT",
+  "shots": [
+    { "key": "Digit1", "expectedShot": "CLEAR", "expectedSpeedKmhMin": 115, "expectedSpeedKmhMax": 140 },
+    { "key": "Digit2", "expectedShot": "SMASH", "expectedSpeedKmhMin": 200, "expectedSpeedKmhMax": 270 },
+    { "key": "Digit3", "expectedShot": "ATTACKING_CLEAR", "expectedSpeedKmhMin": 105, "expectedSpeedKmhMax": 130 },
+    { "key": "Digit4", "expectedShot": "DROP", "expectedSpeedKmhMin": 45, "expectedSpeedKmhMax": 65 },
+    { "key": "Digit5", "expectedShot": "DRIVE", "expectedSpeedKmhMin": 75, "expectedSpeedKmhMax": 100 },
+    { "key": "Digit6", "expectedShot": "NET_SHOT", "expectedSpeedKmhMin": 16, "expectedSpeedKmhMax": 26 },
+    { "key": "Digit7", "expectedShot": "LIFT", "expectedSpeedKmhMin": 108, "expectedSpeedKmhMax": 135 }
+  ]
+}
