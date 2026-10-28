@@ -3,7 +3,7 @@ import {
   SHUTTLE_PHYSICS,
   SHOT_PRESETS,
   COURT_SPEC,
-} from '../core/constants.js';
+} from '../core/badmintonConstants.js';
 import { soundEngine } from '../audio/soundEngine.js';
 
 const _tmpV1 = new THREE.Vector3();

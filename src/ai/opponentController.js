@@ -10,6 +10,7 @@
 
 import { launchShuttleShot } from '../physics/shuttlePhysics.js';
 import { soundEngine } from '../audio/soundEngine.js';
+import { evaluateMatchPoint } from '../core/matchRules.js';
 
 function arrive2D(currentPos, currentVel, targetPos, maxSpeed, maxForce, slowRadius) {
   const dx = targetPos[0] - currentPos[0];
@@ -37,7 +38,7 @@ function arrive2D(currentPos, currentVel, targetPos, maxSpeed, maxForce, slowRad
 }
 
 export function setPlayMode(state, mode = 'ai_match') {
-  if (mode !== 'ai_match' && mode !== 'feeder') {
+  if (mode !== 'ai_match' && mode !== 'feeder' && mode !== 'p2p_multiplayer') {
     mode = 'ai_match';
   }
   state.playMode = mode;
@@ -70,6 +71,35 @@ export function createOpponentController() {
 
     if (!opponent.vel) opponent.vel = [0, 0, 0];
     opponent.swingTimer = Math.max(0, (opponent.swingTimer || 0) - dt);
+
+    // ==========================================
+    // MODE 0: P2P MULTIPLAYER MODE
+    // ==========================================
+    if (state.playMode === 'p2p_multiplayer') {
+      if (!shuttle.inFlight) {
+        if (!rallyScoredForCurrentBall) {
+          rallyScoredForCurrentBall = true;
+          let pointWinner = 'player';
+          if (shuttle.originSide === 'player') {
+            const wonPoint = shuttle.pos[2] < 0 && shuttle.inBounds && shuttle.hitNet !== 'mesh';
+            pointWinner = wonPoint ? 'player' : 'opponent';
+          } else if (shuttle.originSide === 'opponent') {
+            const wonPoint = shuttle.pos[2] > 0 && shuttle.inBounds && shuttle.hitNet !== 'mesh';
+            pointWinner = wonPoint ? 'opponent' : 'player';
+          }
+          evaluateMatchPoint(state, pointWinner);
+          state.rallyResetTimer = 1.10;
+        } else {
+          state.rallyResetTimer = (state.rallyResetTimer || 0) - dt;
+          if (state.rallyResetTimer <= 0) {
+            rallyScoredForCurrentBall = false;
+          }
+        }
+      } else {
+        rallyScoredForCurrentBall = false;
+      }
+      return;
+    }
 
     // ==========================================
     // MODE 1: FEEDER TRAINING MODE
@@ -334,53 +364,49 @@ export function createOpponentController() {
         opponent.state = 'serving';
 
         // Evaluate point winner based on last shot origin and landing point
+        let pointWinner = 'player';
         if (shuttle.originSide === 'player') {
           // Player hit the shot: lands on opponent side (Z < 0), in bounds, and didn't fail at net mesh
           const wonPoint = shuttle.pos[2] < 0 && shuttle.inBounds && shuttle.hitNet !== 'mesh';
-          if (wonPoint) {
-            state.score.player++;
-            state.score.lastPointWinner = 'player';
-            state.score.server = 'player';
-          } else {
-            state.score.opponent++;
-            state.score.lastPointWinner = 'opponent';
-            state.score.server = 'opponent';
-          }
+          pointWinner = wonPoint ? 'player' : 'opponent';
         } else if (shuttle.originSide === 'opponent') {
           // Opponent hit the shot: lands on player side (Z > 0), in bounds, and didn't fail at net mesh
           const wonPoint = shuttle.pos[2] > 0 && shuttle.inBounds && shuttle.hitNet !== 'mesh';
-          if (wonPoint) {
-            state.score.opponent++;
-            state.score.lastPointWinner = 'opponent';
-            state.score.server = 'opponent';
-          } else {
-            state.score.player++;
-            state.score.lastPointWinner = 'player';
-            state.score.server = 'player';
-          }
+          pointWinner = wonPoint ? 'opponent' : 'player';
         }
 
+        evaluateMatchPoint(state, pointWinner);
         state.rallyResetTimer = 1.10;
       }
 
-      // Auto-serve countdown to start next rally
-      state.rallyResetTimer = (state.rallyResetTimer || 0) - dt;
-      if (state.rallyResetTimer <= 0) {
-        state.rallyResetTimer = 1.10;
-        rallyScoredForCurrentBall = false;
+      // Auto-serve countdown to start next rally (only if match is still in progress!)
+      if (state.score.matchWinner === 'none') {
+        state.rallyResetTimer = (state.rallyResetTimer || 0) - dt;
+        if (state.rallyResetTimer <= 0) {
+          state.rallyResetTimer = 1.10;
+          rallyScoredForCurrentBall = false;
 
-        // Launch serve from server side
-        const serveShot = Math.random() < 0.65 ? 'CLEAR' : 'ATTACKING_CLEAR';
-        launchShuttleShot(state, serveShot, 'opponent', {
-          pos: [opponent.pos[0], 1.65, opponent.pos[2]],
-          azimuthDeg: (Math.random() - 0.5) * 6.0,
-        });
+          // Position server in BWF service court
+          const isOpponentServing = state.score.server === 'opponent';
+          if (isOpponentServing) {
+            const isRightEven = state.score.serviceCourt === 'right_even';
+            opponent.pos[0] = isRightEven ? -1.15 : 1.15;
+            opponent.pos[2] = -3.45;
+            const targetAzim = isRightEven ? 4.5 : -4.5; // Serve diagonally across net
 
-        opponent.swingTimer = 0.22;
-        soundEngine.playStrikeSound(serveShot, 'good', Math.round(state.shuttle.speed * 3.6), state);
+            const serveShot = Math.random() < 0.65 ? 'CLEAR' : 'ATTACKING_CLEAR';
+            launchShuttleShot(state, serveShot, 'opponent', {
+              pos: [opponent.pos[0], 1.65, opponent.pos[2]],
+              azimuthDeg: targetAzim,
+            });
 
-        if (typeof onShotLaunched === 'function') {
-          onShotLaunched(serveShot);
+            opponent.swingTimer = 0.22;
+            soundEngine.playStrikeSound(serveShot, 'good', Math.round(state.shuttle.speed * 3.6), state);
+
+            if (typeof onShotLaunched === 'function') {
+              onShotLaunched(serveShot);
+            }
+          }
         }
       }
     }

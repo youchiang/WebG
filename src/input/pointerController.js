@@ -1,4 +1,4 @@
-import { updateVirtualCursor } from '../core/gameState.js';
+import { updateVirtualCursor } from '../core/badmintonGameState.js';
 import { swipeTracker, checkStrikeWindow } from '../physics/racketPhysics.js';
 import { triggerPlayerJump } from '../physics/playerFootwork.js';
 import { setPlayMode } from '../ai/opponentController.js';

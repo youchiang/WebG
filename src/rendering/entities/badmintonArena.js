@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { COURT_SPEC } from '../../core/constants.js';
+import { COURT_SPEC } from '../../core/badmintonConstants.js';
 import {
   createMapleWoodTexture,
   createCourtMatTexture,

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 const PORT = 5177;
-const BASE_URL = `http://localhost:${PORT}`;
+const BASE_URL = `http://localhost:${PORT}/badminton.html`;
 
 function waitForServer(url, timeoutMs = 15000) {
   const start = Date.now();

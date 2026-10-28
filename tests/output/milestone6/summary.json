@@ -1,0 +1,98 @@
+{
+  "timestamp": "2026-10-27T09:25:44.379Z",
+  "tests": [
+    {
+      "id": "m6_p2p_lobby_and_dual_tab_sync",
+      "roomCode": "M6-TEST-ROOM",
+      "hostRoom": "M6-TEST-ROOM",
+      "guestJoined": true,
+      "hostNetwork": {
+        "status": "connected",
+        "role": "host",
+        "roomCode": "M6-TEST-ROOM",
+        "peerConnected": true,
+        "transport": "broadcast",
+        "pingMs": 0,
+        "packetsSent": 5,
+        "packetsReceived": 5,
+        "lastRemoteStrikeSeq": 0,
+        "remoteTargetPos": [
+          0,
+          0,
+          -3.68
+        ]
+      },
+      "guestNetwork": {
+        "status": "connected",
+        "role": "guest",
+        "roomCode": "M6-TEST-ROOM",
+        "peerConnected": true,
+        "transport": "broadcast",
+        "pingMs": 0,
+        "packetsSent": 5,
+        "packetsReceived": 5,
+        "lastRemoteStrikeSeq": 0,
+        "remoteTargetPos": [
+          0,
+          0,
+          -3.68
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "m6_deterministic_strike_sync",
+      "shuttlePos": [
+        -0.54,
+        1.3,
+        1
+      ],
+      "shuttleVel": [
+        0.66,
+        -4.12,
+        10.35
+      ],
+      "originSide": "opponent",
+      "shotType": "SMASH",
+      "passed": true
+    },
+    {
+      "id": "m6_remote_opponent_interpolation",
+      "opponentPos": [
+        -1.35,
+        0.65,
+        -4.25
+      ],
+      "chargingSmash": true,
+      "intendedShot": "SMASH",
+      "posLerpedClose": true,
+      "telegraphActive": true,
+      "passed": true
+    },
+    {
+      "id": "m6_bwf_21pt_deuce_and_service_courts",
+      "evenPassed": true,
+      "oddPassed": true,
+      "deucePassed": true,
+      "gpPassed": true,
+      "winPassed": true,
+      "resetPassed": true,
+      "passed": true
+    },
+    {
+      "id": "m6_performance_and_regression",
+      "performance": {
+        "drawCalls": 1,
+        "triangles": 2,
+        "geometries": 183,
+        "textures": 9
+      },
+      "drawCallsHealthy": true,
+      "consoleErrorsCount": 1,
+      "passed": false
+    }
+  ],
+  "consoleErrors": [
+    "WebSocket connection to 'wss://0.peerjs.com/peerjs?key=peerjs&id=wb3d-room-M6-TEST-ROOM-host&token=muxsunyxrx&version=1.5.4' failed: Error in connection establishment: net::ERR_CONNECTION_RESET"
+  ]
+}

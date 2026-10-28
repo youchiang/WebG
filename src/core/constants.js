@@ -1,119 +1,132 @@
-// Core BWF Court Specifications & Palette Constants
-export const COURT_SPEC = {
-  length: 13.4,
-  halfLength: 6.7,
-  width: 6.1,
-  halfWidth: 3.05,
-  singlesWidth: 5.18,
-  halfSinglesWidth: 2.59,
-  shortServiceDist: 1.98,
-  doublesLongServiceDist: 5.94, // 6.70 - 0.76
-  lineWidth: 0.04,
-  netHeightPosts: 1.55,
-  netHeightCenter: 1.524,
-  netBottomHeight: 0.76,
-  palette: {
-    courtMat: '#98C9A3',
-    woodFloor: '#F3E9DC',
-    woodFloorAlt: '#EAD7C3',
-    lines: '#FFFFFF',
-    walls: '#9FB3C8',
-    dadoWall: '#5C7C99',
-    acousticSlat: '#D4B996',
-    aBoards: '#4F7393',
-  },
-};
+/**
+ * Constants and configuration for Drift Downhill 3D (下山大甩尾！)
+ */
 
-export const HYSTERESIS_PX = 15;
-export const CURSOR_LIMIT_X = 360;
-export const CURSOR_LIMIT_Y = 220;
+export const GAME_CONSTANTS = {
+  // Road & Track parameters
+  TRACK: {
+    WIDTH: 14,                  // Total road width in units
+    GUARD_RAIL_OFFSET: 7.2,     // Distance from centerline to guardrail
+    SEGMENTS: 200,              // Spline resolution points
+    SUMMIT_ELEVATION: 180,      // Summit height in units (Y axis)
+    BASE_ELEVATION: 0,          // Base/finish height in units
+    TOTAL_LENGTH_APPROX: 1800,  // Approx length
+  },
 
-// Badminton Aerodynamics & Aeromechanical Constants (Milestone 2)
-export const SHUTTLE_PHYSICS = {
-  mass: 0.005,             // 5.0 grams tournament feather shuttlecock
-  dragCoeff: 0.215,        // Quadratic air drag coefficient: a_drag = -C_drag * |v| * v
-  gravity: 9.81,           // Downward gravitational acceleration (m/s^2)
-  subSteps: 4,             // 4x sub-stepping per 60Hz physics tick (240Hz sub-step)
-  turnoverDuration: 0.04,  // 40ms nose-forward turnaround transition after racket strike
-  netCatenaryPosts: 1.55,  // Post height (m)
-  netCatenaryCenter: 1.524,// Center dip height (m)
-  netTapeThickness: 0.05,  // Top 50mm cord deflection zone
-  floorY: 0.04,            // Floor contact collision plane
-  singlesHalfWidth: 2.59,  // Singles sideline boundary
-  doublesHalfWidth: 3.05,  // Doubles sideline boundary
-  courtHalfLength: 6.70,   // Baseline boundary
-};
+  // Vehicle physics tuning
+  VEHICLE: {
+    LENGTH: 4.2,
+    WIDTH: 2.0,
+    HEIGHT: 1.3,
+    MASS: 1100,
+    BASE_ACCELERATION: 8.0,     // Downhill base forward drive (relaxed pace)
+    GRAVITY_ACCEL: 4.5,         // Downhill gravity component
+    MAX_SPEED: 24.0,            // Relaxed top speed (controllable on mobile)
+    BOOST_SPEED: 32.0,          // Boost top speed
+    MIN_SPEED: 6.5,             // Minimum crawl speed
+    BRAKE_FORCE: 25.0,
+    STEER_SENSITIVITY: 1.5,     // Lower, smoother steering sensitivity
+    DRIFT_STEER_BOOST: 1.15,    // Gentle yaw response during drift
+    DRIFT_STICK_THRESHOLD: 0.45,// Joystick horizontal deflection to initiate drift
+    MAX_DRIFT_SLIP_ANGLE: 0.52, // Max slip angle (~30 deg, prevents 90-deg spinouts)
+    SLIP_FRICTION_LATERAL: 0.92,// Good lateral grip for controllable drifts
+    SKID_SMOKE_RATE: 0.06,      // Seconds between smoke particle emission
+  },
 
-// Realistic Shot Trajectory Presets (BWF tournament flight curves calibrated for C_drag = 0.215 m^-1)
-export const SHOT_PRESETS = {
-  CLEAR: {
-    name: '高遠球 Clear',
-    type: 'CLEAR',
-    speed: 35.5,           // High deep clear (m/s), drops steeply at back baseline (z ≈ +5.8m)
-    elevationDeg: 31.0,    // High launch angle (peak height ~4.4m)
-    azimuthDeg: 0.0,       // Straight along Z
-    defaultOpponentPos: [0.0, 2.15, -4.2],
-    defaultPlayerPos: [0.0, 2.15, 4.2],
-    outlineState: 'normal_navy',
+  // Drift scoring weights
+  DRIFT_SCORING: {
+    MIN_DRIFT_ANGLE: 0.15,      // ~8.5 degrees slip angle threshold
+    BASE_POINTS_PER_SEC: 250,
+    ANGLE_EXPONENT: 1.3,
+    EDGE_PROXIMITY_THRESHOLD: 2.0, // Near guardrail
+    EDGE_BONUS_MULTIPLIER: 1.5,
+    COMBO_TIMEOUT_SEC: 1.4,     // Seconds before combo chain drops
+    MAX_COMBO: 5.0,
+    COMBO_STEP: 0.3,
   },
-  SMASH: {
-    name: '重殺球 Smash',
-    type: 'SMASH',
-    speed: 68.0,           // High-speed smash (m/s) (~245 km/h), slams mid-court (z ≈ +2.45m)
-    elevationDeg: -24.5,   // Steep downward intercept clearing net at ~1.61m
-    azimuthDeg: 0.0,
-    defaultOpponentPos: [0.0, 2.95, -2.6],
-    defaultPlayerPos: [0.0, 2.95, 2.6],
-    outlineState: 'smash_flame',
+
+  // Yeet Obstacle parameters
+  OBSTACLES: {
+    TYPES: {
+      HUMAN: {
+        id: 'human',
+        name: '觀賽人',
+        baseScore: 300,
+        radius: 0.9,
+        launchImpulse: 22,
+        sfx: 'yeet_human',
+        text: 'YEET! 人類起飛 +300',
+        color: '#FF6B6B',
+      },
+      CAT: {
+        id: 'cat',
+        name: '看熱鬧的橘貓',
+        baseScore: 600,
+        radius: 0.7,
+        launchImpulse: 26,
+        sfx: 'yeet_cat',
+        text: 'CAT ROCKET! 貓咪升空 +600 🚀',
+        color: '#FFA94D',
+      },
+      SHIBA: {
+        id: 'shiba',
+        name: '好奇柴犬',
+        baseScore: 450,
+        radius: 0.8,
+        launchImpulse: 24,
+        sfx: 'yeet_dog',
+        text: 'SHIBA SPIN! 旋轉柴柴 +450 🐕',
+        color: '#FFD43B',
+      },
+      CONE: {
+        id: 'cone',
+        name: '三角錐群',
+        baseScore: 120,
+        radius: 0.6,
+        launchImpulse: 18,
+        sfx: 'yeet_cone',
+        text: 'STRIKE! 三角錐全倒 +120 🎳',
+        color: '#FF922B',
+      },
+      WATERMELON: {
+        id: 'watermelon',
+        name: '農產西瓜堆',
+        baseScore: 500,
+        radius: 1.0,
+        launchImpulse: 20,
+        sfx: 'yeet_melon',
+        text: 'SPLASH! 西瓜大爆發 +500 🍉',
+        color: '#51CF66',
+      },
+    },
   },
-  ATTACKING_CLEAR: {
-    name: '平高球 Attacking Clear',
-    type: 'ATTACKING_CLEAR',
-    speed: 32.5,           // Fast attacking clear (m/s), flatter arc to backcourt (z ≈ +5.1m)
-    elevationDeg: 23.0,    // Flatter trajectory rushing opponent
-    azimuthDeg: 0.0,
-    defaultOpponentPos: [0.0, 2.25, -3.8],
-    defaultPlayerPos: [0.0, 2.25, 3.8],
-    outlineState: 'normal_navy',
+
+  // Color Palette (Light, pastel, soft Japanese anime low-poly aesthetic)
+  COLORS: {
+    SKY: 0xE4F1F9,              // Soft pale dreamy anime sky blue
+    FOG: 0xEEF6FA,              // Milky soft horizon haze
+    SUNLIGHT: 0xFFFAF0,         // Gentle warm sun (low contrast)
+    AMBIENT: 0xF0F5F8,          // Cool-warm balanced ambient
+    MOUNTAIN_GRASS: 0xCDE5C7,   // Soft creamy matcha green meadow
+    MOUNTAIN_ROCK: 0xE4DFD7,    // Soft warm sandstone rock
+    ROAD_ASPHALT: 0xDFE3E8,     // Clean matte ivory-slate road (anti-glare)
+    ROAD_LINE_YELLOW: 0xFEE08B, // Soft warm butter yellow center dashes
+    ROAD_CURB_RED: 0xFCA5A5,    // Pastel coral red curb
+    ROAD_CURB_WHITE: 0xFAFBFD,  // Cream white curb
+    GUARD_RAIL: 0xD5DFE8,       // Soft clean silver-gray rail
+    CAR_PRIMARY: 0x38D9A9,      // Pastel mint turquoise body
+    CAR_SECONDARY: 0xFAFBFD,    // Pure cream white roof/stripes
+    CAR_GLASS: 0xBFDBFE,        // Soft pastel sky blue glass
+    CAR_TAILLIGHT: 0xF87171,    // Soft red glow
+    CAR_WHEEL: 0x475569,        // Soft slate dark wheel
   },
-  DROP: {
-    name: '切球/吊球 Drop',
-    type: 'DROP',
-    speed: 13.8,           // Sliced touch shot (m/s), drops in front court (z ≈ +1.85m)
-    elevationDeg: 7.5,     // Gentle arc skimming close to net
-    azimuthDeg: -2.0,
-    defaultOpponentPos: [0.25, 2.48, -3.2],
-    defaultPlayerPos: [-0.25, 2.48, 3.2],
-    outlineState: 'drop_cyan',
-  },
-  DRIVE: {
-    name: '平抽球 Drive',
-    type: 'DRIVE',
-    speed: 22.0,           // Flat fast drive (m/s), lands mid-court (z ≈ +2.95m)
-    elevationDeg: 4.5,     // Low skimming angle
-    azimuthDeg: -3.0,      // Slight diagonal angle
-    defaultOpponentPos: [0.35, 1.65, -2.8],
-    defaultPlayerPos: [-0.35, 1.65, 2.8],
-    outlineState: 'normal_navy',
-  },
-  NET_SHOT: {
-    name: '網前放網 Net Shot',
-    type: 'NET_SHOT',
-    speed: 5.2,            // Delicate spinning tumble (m/s), lands tight past net (z ≈ +1.25m)
-    elevationDeg: 32.0,    // Soft upward lift over 1.524m net tape
-    azimuthDeg: 3.0,
-    defaultOpponentPos: [-0.25, 1.38, -0.85],
-    defaultPlayerPos: [0.25, 1.38, 0.85],
-    outlineState: 'drop_cyan',
-  },
-  LIFT: {
-    name: '網前挑球 Lift',
-    type: 'LIFT',
-    speed: 34.0,           // Defensive high underhand lift (m/s)
-    elevationDeg: 38.5,    // High trajectory out of deep net corner (peak height ~4.2m)
-    azimuthDeg: 0.0,
-    defaultOpponentPos: [0.25, 0.85, -1.2],
-    defaultPlayerPos: [-0.25, 0.85, 1.2],
-    outlineState: 'normal_navy',
+
+  // Screen Feel
+  JUICE: {
+    HIT_STOP_DURATION_MS: 40,   // Freeze frame duration on big impact
+    MAX_TRAUMA: 1.0,
+    TRAUMA_DECAY: 1.8,
+    MAX_SHAKE_OFFSET: 0.6,
+    MAX_SHAKE_ROLL: 0.04,
   },
 };

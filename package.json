@@ -1,5 +1,5 @@
 {
-  "name": "web-badminton-3d",
+  "name": "drift-downhill-3d",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,11 +7,10 @@
     "dev": "vite --port 5173",
     "build": "vite build",
     "preview": "vite preview --port 5173",
-    "test:m3": "node tests/runners/run_m3_qa.js",
-    "test:m4": "node tests/runners/run_m4_qa.js",
-    "test:m5": "node tests/runners/run_m5_qa.js"
+    "test:drift": "node tests/runners/run_drift_qa.js"
   },
   "dependencies": {
+    "peerjs": "^1.5.4",
     "three": "^0.170.0"
   },
   "devDependencies": {

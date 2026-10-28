@@ -3,7 +3,7 @@ import {
   SHUTTLE_PHYSICS,
   SHOT_PRESETS,
   COURT_SPEC,
-} from '../core/constants.js';
+} from '../core/badmintonConstants.js';
 import {
   predictLandingTarget,
 } from './shuttlePhysics.js';
@@ -441,6 +441,15 @@ export function executePlayerStrike(state, swipeData, racketViewmodel = null, im
   state.player.lastShotType = strikeInfo.shotType;
   state.player.lastShotSpeedKmh = Math.round(speed * 3.6);
   state.player.lastTimingQuality = timing.quality;
+
+  if (strikeInfo.shotType === 'SMASH') {
+    state.score.maxSmashSpeedKmh = Math.max(state.score.maxSmashSpeedKmh || 0, state.player.lastShotSpeedKmh);
+  }
+
+  // Milestone 6: Broadcast strike over P2P network if in multiplayer mode
+  if (typeof state._broadcastLocalStrike === 'function' && state.playMode === 'p2p_multiplayer') {
+    state._broadcastLocalStrike(strikeInfo.shotType, speed, Boolean(state.player.lastJumpSmash));
+  }
 
   // Milestone 4: Trigger Game Feel Pipeline (Hit-Stop, Camera FOV Punch, Trauma Shake, Web Audio, Shockwave)
   triggerImpactGameFeel(state, strikeInfo.shotType, timing.quality, Math.round(speed * 3.6));
