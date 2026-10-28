@@ -22,7 +22,7 @@ export async function generateDriftShareCard({ gameCanvas, state }) {
   ctx.fillStyle = '#0F172A';
   ctx.font = 'bold 44px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('🏔️ 《下山大甩尾！》 秋名山戰報', 540, 126);
+  ctx.fillText('🚛 《垃圾清運行動》 清運戰報', 540, 126);
 
   // 2. Game Canvas Snapshot (Framed Polaroid style)
   ctx.save();
@@ -78,12 +78,13 @@ export async function generateDriftShareCard({ gameCanvas, state }) {
 }
 
 export async function shareDriftScore({ imageBlob, state }) {
-  const shareText = `我在《下山大甩尾！》拿到了 ${state.totalScore.toLocaleString()} 分！\n解鎖頭銜：${state.evaluationTitle} 🚗💨\n累計撞飛 ${state.totalYeeted} 個路旁觀賽群！誰能超越我？😂\n#下山大甩尾 #Threads小遊戲 #3D賽車`;
+  const bagsInfo = state.trashBagsRemaining !== undefined ? `\n📦 護送 ${state.trashBagsRemaining} 袋垃圾成功抵達（甩飛 ${state.trashBagsLost || 0} 袋）` : '';
+  const shareText = `我在《垃圾清運行動》拿到了 ${state.totalScore.toLocaleString()} 分！\n解鎖頭銜：${state.evaluationTitle} 🚛💨${bagsInfo}\n累計撞飛 ${state.totalYeeted} 個路旁觀賽群！誰能超越我？😂\n#垃圾清運行動 #Threads小遊戲 #3D賽車`;
 
   if (navigator.canShare && navigator.canShare({ files: [new File([imageBlob], 'drift-result.png', { type: 'image/png' })] })) {
     try {
       await navigator.share({
-        title: '《下山大甩尾！》成績戰報',
+        title: '《垃圾清運行動》成績戰報',
         text: shareText,
         files: [new File([imageBlob], 'drift-result.png', { type: 'image/png' })],
       });

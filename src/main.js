@@ -59,14 +59,35 @@ class DriftDownhillApp {
         this.vehiclePhysics.resetToStart();
         this.yeetPhysics.reset();
         this.cameraController.reset(this.vehiclePhysics);
+        this.gsm.state.trashBagsRemaining = 30;
+        this.gsm.state.trashBagsLost = 0;
       } else if (event === 'RACE_FINISHED') {
         audioEngine.playFinishFanfare();
       } else if (event === 'RESET') {
         this.vehiclePhysics.resetToStart();
         this.yeetPhysics.reset();
         this.cameraController.reset(this.vehiclePhysics);
+        this.gsm.state.trashBagsRemaining = 30;
+        this.gsm.state.trashBagsLost = 0;
       }
     });
+
+    // Wire Trash Bag Ejection Effects
+    this.vehiclePhysics.onTrashBagEjected = (ejectionData) => {
+      this.vehicleMesh.ejectTrashBag(ejectionData, this.vehiclePhysics);
+      this.gsm.state.trashBagsRemaining = ejectionData.remaining;
+      this.gsm.state.trashBagsLost = ejectionData.lost;
+
+      // Occasionally show funny score popup
+      if (ejectionData.lost % 3 === 1) {
+        this.particleSystem.showScorePopup(
+          '🗑️ 垃圾袋甩飛!',
+          this.vehiclePhysics.position,
+          this.sceneManager.camera,
+          '#CBD5E1'
+        );
+      }
+    };
 
     // Setup Testing Hooks for Playwright
     this.setupTestHooks();
@@ -98,6 +119,8 @@ class DriftDownhillApp {
           z: Number((pos ? pos.z : 0).toFixed(1)),
         },
         wallHits: vp.wallHits || 0,
+        trashBagsRemaining: vp.trashBagsRemaining !== undefined ? vp.trashBagsRemaining : 30,
+        trashBagsLost: vp.trashBagsLost || 0,
         slipDeg: Number(((Math.abs(vp.slipAngle || 0) * 180) / Math.PI).toFixed(1)),
         maxSlipDeg: Number(((vp.maxSlipAngle || 0) * 180 / Math.PI).toFixed(1)),
         pitchDeg: Number(((vp.pitch || 0) * 180 / Math.PI).toFixed(1)),
@@ -170,6 +193,8 @@ class DriftDownhillApp {
 
     state.progress = this.vehiclePhysics.progressU;
     state.speed = this.vehiclePhysics.speed;
+    state.trashBagsRemaining = this.vehiclePhysics.trashBagsRemaining;
+    state.trashBagsLost = this.vehiclePhysics.trashBagsLost;
     this.gsm.updateTrauma(dt);
 
     // 5. Audio Telemetry

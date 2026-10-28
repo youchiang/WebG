@@ -25,6 +25,10 @@ export function createGameState() {
     },
     totalYeeted: 0,
 
+    // Trash Truck Cargo
+    trashBagsRemaining: 30,
+    trashBagsLost: 0,
+
     // Vehicle Telemetry
     speed: 0,              // in units/sec
     speedKmh: 0,           // in km/h display
@@ -187,6 +191,8 @@ export class GameStateManager {
     const s = this.state.totalScore;
     const cats = this.state.yeetCounts.cat;
     const humans = this.state.yeetCounts.human;
+    const remaining = this.state.trashBagsRemaining;
+    const lost = this.state.trashBagsLost;
 
     if (cats >= 5) {
       this.state.evaluationTitle = '🐱 貓咪太空總署署長';
@@ -194,17 +200,23 @@ export class GameStateManager {
     } else if (humans >= 10 && s > 25000) {
       this.state.evaluationTitle = '🎳 秋名山保齡球球王';
       this.state.ratingLetter = 'SS';
+    } else if (remaining >= 25 && s > 20000) {
+      this.state.evaluationTitle = '🚛 環保局王牌駕駛·秋名山清潔隊長';
+      this.state.ratingLetter = 'SSS';
+    } else if (lost >= 15) {
+      this.state.evaluationTitle = '💥 沿路天女散花隊員';
+      this.state.ratingLetter = 'B';
     } else if (s > 20000) {
-      this.state.evaluationTitle = '💨 胎煙狂魔·神級漂移手';
+      this.state.evaluationTitle = '💨 給愛麗絲狂飆清運手';
       this.state.ratingLetter = 'S';
     } else if (s > 12000) {
-      this.state.evaluationTitle = '🚗 熟練的下山老司機';
+      this.state.evaluationTitle = '🚛 熟練的清潔隊老司機';
       this.state.ratingLetter = 'A';
     } else if (s > 6000) {
-      this.state.evaluationTitle = '🚙 下坡漫遊觀光客';
+      this.state.evaluationTitle = '🚙 悠閒的下坡收運工';
       this.state.ratingLetter = 'B';
     } else {
-      this.state.evaluationTitle = '🔰 護欄親善大使 (撞爛了)';
+      this.state.evaluationTitle = '🔰 護欄親善大使 (垃圾袋噴光了)';
       this.state.ratingLetter = 'C';
     }
   }

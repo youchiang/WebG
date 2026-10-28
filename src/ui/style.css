@@ -121,6 +121,18 @@ html, body {
   background: #FDE047;
 }
 
+.hud-trash-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #F1F5F9;
+  color: #1E293B;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
 .hud-speed-badge {
   font-size: 13px;
   font-weight: 700;

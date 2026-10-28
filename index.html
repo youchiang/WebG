@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>《下山大甩尾！》— 3D 手機直向賽車甩尾</title>
+    <title>《垃圾清運行動》— 3D 台灣垃圾車下山大甩尾</title>
 
     <!-- Social Media Open Graph Tags (Threads / IG) -->
-    <meta property="og:title" content="《下山大甩尾！》— 單手極限 3D 山路漂移挑戰" />
-    <meta property="og:description" content="從山頂一路直衝山腳！單指滑動甩尾，掃飛沿途看熱鬧的觀賽人與柴柴！" />
+    <meta property="og:title" content="《垃圾清運行動》— 單手極限 3D 台灣垃圾車山路甩尾" />
+    <meta property="og:description" content="給愛麗絲響起！駕駛台灣黃色垃圾車從山頂一路甩尾下山，小心後斗的黑色垃圾袋被甩飛！" />
     <meta property="og:type" content="website" />
 
     <link rel="stylesheet" href="/src/ui/style.css" />
@@ -32,6 +32,11 @@
             <span id="hud-combo-text">x1.0</span>
           </div>
 
+          <div id="hud-trash-badge" class="hud-trash-badge">
+            <span>🗑️</span>
+            <span id="hud-trash-text">30/30</span>
+          </div>
+
           <div id="hud-speed-badge" class="hud-speed-badge">0 km/h</div>
         </div>
 
@@ -50,11 +55,11 @@
       <!-- Start Screen Overlay -->
       <section id="start-screen" class="overlay-screen">
         <div class="card-box">
-          <span class="card-tag">3D MOBILE CASUAL DRIFT</span>
-          <h1 class="card-title">下山大甩尾！</h1>
+          <span class="card-tag">3D TAIWAN TRASH TRUCK DRIFT</span>
+          <h1 class="card-title">垃圾清運行動</h1>
           <p class="card-subtitle">
-            從雲霧山頂一路漂移至山腳終點線！<br/>
-            單手滑動甩尾，用車尾掃飛沿途觀賽人與柴柴！
+            給愛麗絲響起！從山頂一路狂飆至山腳終點站！<br/>
+            單手滑動甩尾過彎，小心後車斗的黑色垃圾袋飛出去！
           </p>
 
           <div class="guide-box">
@@ -67,12 +72,12 @@
               <span><strong>極限拉煙</strong>：大幅度轉向自動觸發鎖死漂移累積高分</span>
             </div>
             <div class="guide-item">
-              <span class="guide-icon">🎳</span>
-              <span><strong>魔性擊飛</strong>：根據甩尾力道撞飛路旁人、貓、狗可獲高額加成！</span>
+              <span class="guide-icon">🗑️</span>
+              <span><strong>清運守則</strong>：後車斗載滿 30 袋垃圾，猛烈甩尾時小心垃圾袋甩飛！</span>
             </div>
           </div>
 
-          <button id="start-race-btn" class="btn-primary" type="button">開始下山 🚗💨</button>
+          <button id="start-race-btn" class="btn-primary" type="button">開始清運 🚛💨</button>
         </div>
       </section>
 
@@ -80,7 +85,7 @@
       <section id="finish-screen" class="overlay-screen hidden">
         <div class="card-box">
           <span class="card-tag">RUN COMPLETE 🏁</span>
-          <h2 class="card-title">順利抵達山腳！</h2>
+          <h2 class="card-title">清運任務完成！</h2>
 
           <div class="summary-score-banner">
             <span class="hud-label">最終總甩尾成績</span>

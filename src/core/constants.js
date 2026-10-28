@@ -19,11 +19,11 @@ export const GAME_CONSTANTS = {
     WIDTH: 2.0,
     HEIGHT: 1.3,
     MASS: 1100,
-    BASE_ACCELERATION: 8.0,     // Downhill base forward drive (relaxed pace)
+    BASE_ACCELERATION: 10.5,    // Downhill base forward drive (10.5)
     GRAVITY_ACCEL: 4.5,         // Downhill gravity component
-    MAX_SPEED: 24.0,            // Relaxed top speed (controllable on mobile)
-    BOOST_SPEED: 32.0,          // Boost top speed
-    MIN_SPEED: 6.5,             // Minimum crawl speed
+    MAX_SPEED: 29.5,            // Top speed ~106 km/h (29.5)
+    BOOST_SPEED: 38.0,          // Boost top speed (38.0)
+    MIN_SPEED: 8.0,             // Minimum crawl speed (8.0)
     BRAKE_FORCE: 25.0,
     STEER_SENSITIVITY: 1.5,     // Lower, smoother steering sensitivity
     DRIFT_STEER_BOOST: 1.15,    // Gentle yaw response during drift
@@ -114,11 +114,17 @@ export const GAME_CONSTANTS = {
     ROAD_CURB_RED: 0xFCA5A5,    // Pastel coral red curb
     ROAD_CURB_WHITE: 0xFAFBFD,  // Cream white curb
     GUARD_RAIL: 0xD5DFE8,       // Soft clean silver-gray rail
-    CAR_PRIMARY: 0x38D9A9,      // Pastel mint turquoise body
-    CAR_SECONDARY: 0xFAFBFD,    // Pure cream white roof/stripes
-    CAR_GLASS: 0xBFDBFE,        // Soft pastel sky blue glass
+    CAR_PRIMARY: 0xFACC15,      // Classic Taiwan Trash Truck warm yellow (亮黃)
+    CAR_SECONDARY: 0xFAFBFD,    // White bumpers & cab accents (白)
+    CAR_STRIPE: 0x22C55E,       // Eco green side stripe (環保綠)
+    CAR_CABIN: 0xFDE047,        // Warm light yellow for cab
+    CAR_GLASS: 0x93C5FD,        // Soft pastel sky blue glass
     CAR_TAILLIGHT: 0xF87171,    // Soft red glow
-    CAR_WHEEL: 0x475569,        // Soft slate dark wheel
+    CAR_WHEEL: 0x334155,        // Soft slate dark wheel
+    BEACON_AMBER: 0xF59E0B,     // Warning beacons on roof
+    TRASH_BAG_BLACK: 0x1E293B,  // Black plastic trash bags
+    TRASH_BAG_DARK: 0x0F172A,
+    TRASH_BAG_GRAY: 0x334155,
   },
 
   // Screen Feel

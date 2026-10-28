@@ -11,6 +11,7 @@ export class HudOverlay {
     this.scoreValEl = document.getElementById('hud-score-val');
     this.comboBadgeEl = document.getElementById('hud-combo-badge');
     this.comboTextEl = document.getElementById('hud-combo-text');
+    this.trashTextEl = document.getElementById('hud-trash-text');
     this.speedBadgeEl = document.getElementById('hud-speed-badge');
     this.progressFillEl = document.getElementById('hud-progress-fill');
     this.driftCalloutEl = document.getElementById('drift-callout');
@@ -99,7 +100,12 @@ export class HudOverlay {
       }
     }
 
-    // 3. Speed & Progress
+    // 3. Trash Bags Remaining & Speed & Progress
+    if (this.trashTextEl) {
+      const rem = state.trashBagsRemaining !== undefined ? state.trashBagsRemaining : 30;
+      this.trashTextEl.innerText = `${rem}/30`;
+    }
+
     if (this.speedBadgeEl) {
       const speedKmh = Math.round(state.speed * 3.6);
       this.speedBadgeEl.innerText = `${speedKmh} km/h`;

@@ -22,7 +22,7 @@ import path from 'path';
  */
 
 async function runDriftQA() {
-  console.log('🏎️ Starting Drift Downhill 3D Comprehensive QA Runner...');
+  console.log('🏎️ Starting Drift Downhill 3D 《垃圾清運行動》 QA Runner...');
 
   const artifactsDir = path.resolve('tests/artifacts');
   if (!fs.existsSync(artifactsDir)) {
@@ -82,6 +82,30 @@ async function runDriftQA() {
 
   try {
     // =========================================================================
+    // Check 0: 遊戲標題包含《垃圾清運行動》
+    // =========================================================================
+    console.log('\n--- [Check 0] 遊戲名稱 document.title 檢驗 ---');
+    await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded', timeout: 15000 });
+    const pageTitle = await page.title();
+    console.log(`Document Title: "${pageTitle}"`);
+    const titleMatch = pageTitle.includes('垃圾清運行動');
+    const check0Pass = titleMatch;
+    const check0Detail = check0Pass
+      ? `PASS: title 包含「垃圾清運行動」("${pageTitle}")`
+      : `FAIL: title 未包含「垃圾清運行動」("${pageTitle}")`;
+
+    if (check0Pass) console.log('✅ ' + check0Detail);
+    else console.error('❌ ' + check0Detail);
+
+    testResults.push({
+      id: 0,
+      name: '遊戲標題檢查 (Title)',
+      threshold: 'document.title 包含「垃圾清運行動」',
+      detail: check0Detail,
+      pass: check0Pass,
+    });
+
+    // =========================================================================
     // Check 1: Nose-up Pitch Check during Straight Downhill Driving (Steer 0)
     // =========================================================================
     console.log('\n--- [Check 1] Nose-up Pitch Angle Check ---');
@@ -109,7 +133,7 @@ async function runDriftQA() {
 
     if (definedPitches.length === 0) {
       check1Pass = false;
-      check1Detail = 'FAIL: pitchDeg telemetry undefined (pending developer implementation)';
+      check1Detail = 'FAIL: pitchDeg telemetry undefined';
       console.warn('⚠️ ' + check1Detail);
     } else {
       const maxPitch = Math.max(...definedPitches.map(s => s.pitchDeg));
@@ -142,12 +166,10 @@ async function runDriftQA() {
     // Run A: Steer +0.6
     await freshStart();
     const steerRightResult = await page.evaluate(() => {
-      // Advance straight for 300ms to establish forward velocity and heading
       window.simulateJoystick(0, 0);
       window.advanceTime(300, true);
       const s0 = JSON.parse(window.render_game_to_text());
 
-      // Advance 100ms straight to get baseline travel direction
       window.advanceTime(100, true);
       const s1 = JSON.parse(window.render_game_to_text());
 
@@ -157,13 +179,11 @@ async function runDriftQA() {
       const fx = headingLen > 0.001 ? headingX / headingLen : 0;
       const fz = headingLen > 0.001 ? headingZ / headingLen : 1;
 
-      // Screen right = cross(viewDir, up) = (-fz, 0, fx)
       const rightX = -fz;
       const rightZ = fx;
 
       const posBefore = { ...s1.carPos };
 
-      // Apply Steer +0.6 for 0.6s
       window.simulateJoystick(0.6, 0);
       for (let i = 0; i < 6; i++) {
         window.advanceTime(100, true);
@@ -198,7 +218,6 @@ async function runDriftQA() {
 
       const posBefore = { ...s1.carPos };
 
-      // Apply Steer -0.6 for 0.6s
       window.simulateJoystick(-0.6, 0);
       for (let i = 0; i < 6; i++) {
         window.advanceTime(100, true);
@@ -238,7 +257,6 @@ async function runDriftQA() {
     await freshStart();
 
     const driftRun = await page.evaluate(() => {
-      // Accelerate downhill to speed > 10
       window.simulateJoystick(0, 0.4);
       for (let i = 0; i < 20; i++) {
         window.advanceTime(50, true);
@@ -246,7 +264,6 @@ async function runDriftQA() {
         if (s.speed > 10) break;
       }
 
-      // Hold steer 0.9 for 1.5s
       window.simulateJoystick(0.9, 0.2);
       const samples = [];
       for (let i = 0; i < 15; i++) {
@@ -258,16 +275,16 @@ async function runDriftQA() {
           isDrifting: s.isDrifting,
           slipDeg: s.slipDeg,
           maxSlipDeg: s.maxSlipDeg,
+          trashBagsRemaining: s.trashBagsRemaining,
+          trashBagsLost: s.trashBagsLost,
         });
       }
       return samples;
     });
 
-    // Capture standard mid drift screenshot
     await page.screenshot({ path: path.join(artifactsDir, '02_mid_drift.png') });
     console.log('📸 Captured 02_mid_drift.png');
 
-    // Capture closeup screenshot (slightly tighter camera rig for clear body/smoke inspection)
     await page.evaluate(() => {
       if (window.driftGameApp && window.driftGameApp.cameraController) {
         window.driftGameApp.cameraController.followDistance = 6.0;
@@ -278,7 +295,6 @@ async function runDriftQA() {
     await page.screenshot({ path: path.join(artifactsDir, '05_drift_closeup.png') });
     console.log('📸 Captured 05_drift_closeup.png');
 
-    // Restore camera rig
     await page.evaluate(() => {
       if (window.driftGameApp && window.driftGameApp.cameraController) {
         window.driftGameApp.cameraController.followDistance = 7.5;
@@ -286,7 +302,6 @@ async function runDriftQA() {
       }
     });
 
-    // Evaluate slip angle
     let check5Pass = false;
     let check5Detail = '';
     const slipValues = driftRun
@@ -299,7 +314,7 @@ async function runDriftQA() {
 
     if (slipValues.length === 0) {
       check5Pass = false;
-      check5Detail = 'FAIL: slipDeg/maxSlipDeg telemetry undefined (pending developer implementation)';
+      check5Detail = 'FAIL: slipDeg/maxSlipDeg telemetry undefined';
       console.warn('⚠️ ' + check5Detail);
     } else {
       const peakSlip = Math.max(...slipValues);
@@ -326,20 +341,82 @@ async function runDriftQA() {
     });
 
     // =========================================================================
+    // Check 6: 垃圾袋載貨與甩飛機制 (Trash Bags Cargo Ejection)
+    // =========================================================================
+    console.log('\n--- [Check 6] 垃圾袋載貨與甩飛機制檢驗 ---');
+    const startTrashState = await freshStart();
+    const initialBags = typeof startTrashState.trashBagsRemaining === 'number'
+      ? startTrashState.trashBagsRemaining
+      : (await page.evaluate(() => window.driftGameApp?.vehiclePhysics?.trashBagsRemaining ?? 30));
+    const initialLost = typeof startTrashState.trashBagsLost === 'number'
+      ? startTrashState.trashBagsLost
+      : (await page.evaluate(() => window.driftGameApp?.vehiclePhysics?.trashBagsLost ?? 0));
+
+    console.log(`起跑時垃圾袋狀態: 剩餘 ${initialBags} 袋, 已甩飛 ${initialLost} 袋`);
+
+    // 進行激烈過彎甩尾 2~3 秒以觸發離心力甩飛
+    const afterDriftTrash = await page.evaluate(() => {
+      // 加速進入彎道
+      window.simulateJoystick(0, 0.5);
+      for (let i = 0; i < 20; i++) {
+        window.advanceTime(50, false);
+      }
+      // 大幅轉向甩尾 2 秒
+      window.simulateJoystick(0.9, 0.2);
+      for (let i = 0; i < 20; i++) {
+        window.advanceTime(100, false);
+      }
+      const s = JSON.parse(window.render_game_to_text());
+      const vpRemaining = window.driftGameApp?.vehiclePhysics?.trashBagsRemaining;
+      const vpLost = window.driftGameApp?.vehiclePhysics?.trashBagsLost;
+      return {
+        stateRemaining: s.trashBagsRemaining,
+        stateLost: s.trashBagsLost,
+        vpRemaining,
+        vpLost,
+      };
+    });
+
+    const currentRemaining = typeof afterDriftTrash.stateRemaining === 'number'
+      ? afterDriftTrash.stateRemaining
+      : afterDriftTrash.vpRemaining;
+    const currentLost = typeof afterDriftTrash.stateLost === 'number'
+      ? afterDriftTrash.stateLost
+      : afterDriftTrash.vpLost;
+
+    console.log(`甩尾後垃圾袋狀態: 剩餘 ${currentRemaining} 袋, 已甩飛 ${currentLost} 袋`);
+
+    const initialBagsValid = initialBags > 0;
+    const bagsLostValid = currentLost > 0;
+    const bagsReducedValid = currentRemaining < initialBags;
+    const checkTrashPass = initialBagsValid && bagsLostValid && bagsReducedValid;
+    const checkTrashDetail = checkTrashPass
+      ? `PASS: 起跑初始 ${initialBags} 袋，甩尾後甩飛 ${currentLost} 袋，剩餘 ${currentRemaining} 袋`
+      : `FAIL: 垃圾袋未正確甩飛 (初始: ${initialBags}, 甩飛: ${currentLost}, 剩餘: ${currentRemaining})`;
+
+    if (checkTrashPass) console.log('✅ ' + checkTrashDetail);
+    else console.error('❌ ' + checkTrashDetail);
+
+    testResults.push({
+      id: 6,
+      name: '垃圾袋甩飛機制 (Trash Bags)',
+      threshold: '初始 > 0，激烈甩尾後 lost > 0 且 remaining 減少',
+      detail: checkTrashDetail,
+      pass: checkTrashPass,
+    });
+
+    // =========================================================================
     // Check 3: Wall Robustness ("Lazy Player" Runs)
     // =========================================================================
     console.log('\n--- [Check 3] Wall Robustness Lazy Player Runs ---');
 
-    // Run 3a: Hold steer +1.0 for 3s then 0 until finish
     console.log('Running Lazy Run (a): steer +1.0 for 3s then 0...');
     await freshStart();
     const lazyA = await page.evaluate(() => {
-      // Steer +1.0 for 3s
       window.simulateJoystick(1.0, 0);
       for (let i = 0; i < 30; i++) {
         window.advanceTime(100, false);
       }
-      // Steer 0 for rest of run
       window.simulateJoystick(0, 0);
       let steps = 0;
       for (let i = 0; i < 3000; i++) {
@@ -355,25 +432,21 @@ async function runDriftQA() {
     const wallHits3a = typeof lazyA.finalState.wallHits === 'number' ? lazyA.finalState.wallHits : undefined;
     console.log(`Lazy Run (a) finished in ${lazyA.steps} steps. wallHits: ${wallHits3a !== undefined ? wallHits3a : 'undefined'}`);
 
-    // Run 3b: Zig-zag sin steer amplitude 0.8 for full run
     console.log('Running Lazy Run (b): zig-zag sin steer 0.8...');
     await freshStart();
 
-    // Advance first 80 steps to mid-course mountain descent with obstacles
     await page.evaluate(() => {
       for (let i = 0; i < 80; i++) {
         const steer = Math.sin(i * 0.15) * 0.8;
         window.simulateJoystick(steer, 0);
         window.advanceTime(100, false);
       }
-      window.advanceTime(16, true); // Render frame for gameplay screenshot
+      window.advanceTime(16, true);
     });
 
-    // Capture gameplay screenshot
     await page.screenshot({ path: path.join(artifactsDir, '03_yeet_gameplay.png') });
     console.log('📸 Captured 03_yeet_gameplay.png (mid-descent active gameplay)');
 
-    // Complete the rest of Run 3b to FINISHED
     const lazyB = await page.evaluate(() => {
       let steps = 80;
       for (let i = 80; i < 3000; i++) {
@@ -396,8 +469,9 @@ async function runDriftQA() {
     const hitsInfoA = wallHits3a !== undefined ? `${wallHits3a}` : 'N/A';
     const hitsInfoB = wallHits3b !== undefined ? `${wallHits3b}` : 'N/A';
 
-    if (wallHits3a > 40 || wallHits3b > 40) {
-      check3Detail = `WARN: wallHits high on lazy runs (3a: ${hitsInfoA}, 3b: ${hitsInfoB} > 40)`;
+    // 隨車速調快放寬警告門檻至 50
+    if (wallHits3a > 50 || wallHits3b > 50) {
+      check3Detail = `WARN: wallHits elevated on fast runs (3a: ${hitsInfoA}, 3b: ${hitsInfoB} > 50)`;
       console.warn('⚠️ ' + check3Detail);
     } else {
       check3Detail = `REPORT: Lazy runs completed (3a: ${hitsInfoA} wall hits, 3b: ${hitsInfoB} wall hits)`;
@@ -406,7 +480,7 @@ async function runDriftQA() {
     testResults.push({
       id: 3,
       name: 'Wall Robustness (Lazy Runs)',
-      threshold: 'Report numbers (WARN if > 40)',
+      threshold: 'Report numbers (WARN if > 50)',
       detail: check3Detail,
       pass: check3Pass,
     });
@@ -418,7 +492,7 @@ async function runDriftQA() {
     await freshStart();
 
     const autoRun = await page.evaluate(() => {
-      window.simulateJoystick(0, 0); // Steer 0 arcade road assist
+      window.simulateJoystick(0, 0);
       let steps = 0;
       for (let i = 0; i < 3000; i++) {
         window.advanceTime(100, false);
@@ -426,7 +500,7 @@ async function runDriftQA() {
         const s = JSON.parse(window.render_game_to_text());
         if (s.mode === 'FINISHED') break;
       }
-      window.advanceTime(16, true); // Final frame rendered
+      window.advanceTime(16, true);
       const finalState = JSON.parse(window.render_game_to_text());
       return { finalState, steps };
     });
@@ -441,7 +515,7 @@ async function runDriftQA() {
 
     if (typeof autoWallHits !== 'number') {
       check4Pass = false;
-      check4Detail = 'FAIL: wallHits telemetry undefined (pending developer implementation)';
+      check4Detail = 'FAIL: wallHits telemetry undefined';
       console.warn('⚠️ ' + check4Detail);
     } else if (autoWallHits > 15) {
       check4Pass = false;
@@ -462,31 +536,31 @@ async function runDriftQA() {
     });
 
     // =========================================================================
-    // Check 6: Course Completion & Error-Free Console / Page
+    // Check 7: Course Completion & Error-Free Console / Page
     // =========================================================================
-    console.log('\n--- [Check 6] Finish State & Error Verification ---');
+    console.log('\n--- [Check 7] Finish State & Error Verification ---');
     const finishedMode = autoRun.finalState.mode === 'FINISHED';
     const noErrors = pageErrors.length === 0 && consoleErrors.length === 0;
-    const check6Pass = finishedMode && noErrors;
-    const check6Detail = check6Pass
+    const check7Pass = finishedMode && noErrors;
+    const check7Detail = check7Pass
       ? `PASS: Mode is FINISHED, 0 page errors, 0 console errors`
       : `FAIL: Finished=${finishedMode}, pageErrors=${pageErrors.length}, consoleErrors=${consoleErrors.length}`;
 
-    if (check6Pass) console.log('✅ ' + check6Detail);
-    else console.error('❌ ' + check6Detail);
+    if (check7Pass) console.log('✅ ' + check7Detail);
+    else console.error('❌ ' + check7Detail);
 
     testResults.push({
-      id: 6,
+      id: 7,
       name: 'Finish & Clean Console Check',
       threshold: 'mode === FINISHED and 0 errors',
-      detail: check6Detail,
-      pass: check6Pass,
+      detail: check7Detail,
+      pass: check7Pass,
     });
 
     // =========================================================================
-    // Check 7: Screenshot Artifact Verification
+    // Check 8: Screenshot Artifact Verification
     // =========================================================================
-    console.log('\n--- [Check 7] Screenshot Artifact Verification ---');
+    console.log('\n--- [Check 8] Screenshot Artifact Verification ---');
     const expectedScreenshots = [
       '01_start_screen.png',
       '02_mid_drift.png',
@@ -503,20 +577,20 @@ async function runDriftQA() {
       }
     }
 
-    const check7Pass = missingScreenshots.length === 0;
-    const check7Detail = check7Pass
+    const check8Pass = missingScreenshots.length === 0;
+    const check8Detail = check8Pass
       ? `PASS: All 5 screenshots generated in ${artifactsDir}`
       : `FAIL: Missing or empty screenshots: ${missingScreenshots.join(', ')}`;
 
-    if (check7Pass) console.log('✅ ' + check7Detail);
-    else console.error('❌ ' + check7Detail);
+    if (check8Pass) console.log('✅ ' + check8Detail);
+    else console.error('❌ ' + check8Detail);
 
     testResults.push({
-      id: 7,
+      id: 8,
       name: 'Screenshot Artifacts Check',
       threshold: 'All 5 screenshots exist and non-empty',
-      detail: check7Detail,
-      pass: check7Pass,
+      detail: check8Detail,
+      pass: check8Pass,
     });
 
   } catch (err) {
@@ -536,7 +610,7 @@ async function runDriftQA() {
   // Summary Table Output
   // ===========================================================================
   console.log('\n========================================================================================');
-  console.log('📊 DRIFT DOWNHILL 3D AUTOMATED QA SUMMARY REPORT');
+  console.log('📊 《垃圾清運行動》 AUTOMATED QA SUMMARY REPORT');
   console.log('========================================================================================');
   console.log('| ID | Check Name | Target / Threshold | Result | Details |');
   console.log('|---|---|---|---|---|');

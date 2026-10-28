@@ -41,6 +41,12 @@ export class VehiclePhysics {
     this.speed = 0;
     this.wallHits = 0;         // Wall collision counter
 
+    // Trash Cargo State
+    this.trashBagsRemaining = 30; // 30 bags initially
+    this.trashBagsLost = 0;
+    this.trashEjectTimer = 0;
+    this.onTrashBagEjected = null; // Callback for rendering/particle effects
+
     // Controls
     this.targetSteer = 0;
     this.steerInput = 0;       // -1 (Left) to +1 (Right)
@@ -71,6 +77,9 @@ export class VehiclePhysics {
     this.isDrifting = false;
     this.isNearEdge = false;
     this.wallHits = 0;
+    this.trashBagsRemaining = 30;
+    this.trashBagsLost = 0;
+    this.trashEjectTimer = 0;
     this.roll = 0;
     this.pitch = 0;
 
@@ -129,7 +138,7 @@ export class VehiclePhysics {
 
     // 2. Downhill Gravity and Forward Drive
     // Spline Y slope gradient provides gentle natural downhill gravity acceleration
-    const slopeGravity = Math.max(0.05, -tangent.y) * 8.0;
+    const slopeGravity = Math.max(0.05, -tangent.y) * 10.5;
     let targetForwardAccel = GAME_CONSTANTS.VEHICLE.BASE_ACCELERATION + slopeGravity;
 
     // Up/Down joystick modulation
@@ -264,6 +273,40 @@ export class VehiclePhysics {
     this.maxSlipAngle = Math.max(this.maxSlipAngle, Math.abs(this.beta));
     this.bodyYaw = this.travelYaw + this.beta;
     this.yaw = this.bodyYaw;
+
+    // 4b. Trash Bag Ejection on Drift / Hard Cornering (Centrifugal Fly-out)
+    const isHardTurning = Math.abs(this.steerYawRate) > 0.38 || Math.abs(this.slipAngle) > 0.22;
+    if ((this.isDrifting || isHardTurning) && this.speed > 10.0 && this.trashBagsRemaining > 0) {
+      const driftIntensity = THREE.MathUtils.clamp(
+        Math.max(
+          Math.abs(this.slipAngle) / 0.5,
+          Math.abs(this.steerYawRate) / 0.7,
+          (this.speed - 10.0) / 19.5
+        ),
+        0,
+        1
+      );
+      // Intensity-based drop interval: ~0.35s to 0.65s (higher intensity = faster loss)
+      const dropInterval = THREE.MathUtils.lerp(0.65, 0.35, driftIntensity);
+      this.trashEjectTimer += dt;
+      if (this.trashEjectTimer >= dropInterval) {
+        this.trashEjectTimer = 0;
+        this.trashBagsRemaining--;
+        this.trashBagsLost++;
+
+        if (this.onTrashBagEjected) {
+          // Centrifugal throw outward from turn
+          const outwardSign = Math.sign(this.steerInput) || (this.slipAngle > 0 ? 1 : -1);
+          this.onTrashBagEjected({
+            remaining: this.trashBagsRemaining,
+            lost: this.trashBagsLost,
+            outwardSign,
+          });
+        }
+      }
+    } else {
+      this.trashEjectTimer = Math.max(0, this.trashEjectTimer - dt * 0.5);
+    }
 
     // 5. Velocity and Position Integration
     this.travelForward.set(Math.sin(this.travelYaw), 0, Math.cos(this.travelYaw)).normalize();
