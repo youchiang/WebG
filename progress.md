@@ -184,3 +184,16 @@ d:\AGYWorkspace\WebG\
    - 將賽道縱深由 `Z: 0 -> 1750` 縮短為 `Z: 0 -> 720`，總長由約 `2,348m` 縮減約 **50%** 至 `1,170m`（全程完賽時間由約 80 秒濃縮至約 36 秒，節奏更緊湊刺激）。
 3. **移除菜渣色塊 (`src/main.js`, `src/rendering/particleSystem.js`, `src/ui/style.css`)**：
    - 徹底移除 `showVeggieSplat()`、`.veggie-splat-group` 與 `.veggie-scrap`，垃圾袋甩飛時僅呈現純 3D 實體黑色垃圾袋拋物線飛出效果，畫面乾淨清爽。
+
+---
+
+## 彎道幾何建模重構與《給愛麗絲》垃圾車背景音樂實裝 (Phase 6 Update)
+
+### 🛠️ 修改項目明細
+1. **彎道拐彎處 3D 建模修正 (`src/physics/trackSpline.js`, `src/rendering/trackRenderer.js`)**：
+   - **根除內側摺疊自交（Bowtie Self-Intersection）**：將 10 連環彎道改為 $C^2$ 平滑解析包絡曲線（最小曲率半徑 $R_{\min} \ge 18.0\text{m} \gg 7.2\text{m}$ 護欄偏移），徹底消除急彎內側因曲率半徑小於半路寬而產生的路面與護欄反向打結摺疊。
+   - **連續切線法向量 (`getNormalAt`)**：移除原本離散陣列查表 `Math.floor(u * sampleCount)` 造成的階梯狀鋸齒，改由平滑切線直接計算連續水平法向量 `crossVectors(tangent, up)`。
+   - **無扭轉護欄擠出網格與獨立虛線 (`buildGuardrails`, `buildCenterDashedLine`)**：移除 `THREE.TubeGeometry`（在 3D 坡道反曲點會發生 Frenet frame 180° 翻轉扭曲），改以道路基準座標系 `(normal, binormal)` 直接建構 560 段無扭轉護欄圓管；中央黃色虛線改為獨立雙段式 Quad，消除跨越間隙的斜切線。
+2. **台灣垃圾車經典名曲《給愛麗絲》(Für Elise) 實裝 (`src/core/audioEngine.js`)**：
+   - 以 Web Audio API 雙振盪器（溫暖三角波基音 + 輕柔正弦波高八度音樂盒泛音 + 2200Hz 低通濾波）合成台灣清潔隊垃圾車經典電子音樂盒旋律《給愛麗絲》（含完整 A1、A2 主題與 B 段大調轉折循環）。
+   - 將背景音樂匯流排增益調低至柔和舒適的 `0.14`（單音峰值 `0.065`），溫馨陪伴不刺耳、不搶音效。

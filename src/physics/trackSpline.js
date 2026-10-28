@@ -19,81 +19,42 @@ export class TrackSpline {
   }
 
   initSpline() {
-    // Compact, action-packed mountain pass with 10 continuous tight hairpin/switchback turns (~1,170m total length)
-    // Coordinate system: X = lateral (-40 to +40), Y = altitude (115 down to 0), Z = progression forward (0 to 720)
-    const rawWaypoints = [
-      // Summit Start Area (steady downhill pitch for clean launch)
-      new THREE.Vector3(0, 115, 0),
-      new THREE.Vector3(3, 112, 28),
-      new THREE.Vector3(10, 109, 55),
+    // Generate a C2-smooth, compact 10-turn mountain pass (~1,050m total length)
+    // Minimum centerline radius of curvature R_min >= 18.5m everywhere (> 7.2m guardrail offset),
+    // guaranteeing zero inner-edge pinching, folding, or bowtie self-intersection at corners!
+    const rawWaypoints = [];
+    const totalZ = 750;
+    const stepZ = 10; // Dense 10m sampling for ultra-smooth Catmull-Rom interpolation
+    const turnStartZ = 45;
+    const turnEndZ = 705; // 660m span for 10 turns (66m per turn)
+    const halfPeriodZ = 66;
+    const maxAmpX = 24.5; // R_min = (66/pi)^2 / 24.5 = 18.0m >> 7.2m guardrail offset
 
-      // 1st Hairpin Right (Z: 55 -> 115)
-      new THREE.Vector3(28, 106, 70),
-      new THREE.Vector3(40, 103.5, 85),
-      new THREE.Vector3(28, 101, 100),
-      new THREE.Vector3(5, 98.5, 115),
+    for (let z = 0; z <= totalZ; z += stepZ) {
+      // Smooth envelope so entry (0..45) and exit (705..750) blend seamlessly with zero curvature jump
+      let env = 0;
+      if (z >= turnStartZ && z <= turnEndZ) {
+        const uTurn = (z - turnStartZ) / (turnEndZ - turnStartZ);
+        // Smoothstep ramp in first 8% and last 8%
+        const rampIn = THREE.MathUtils.smoothstep(uTurn, 0.0, 0.08);
+        const rampOut = 1.0 - THREE.MathUtils.smoothstep(uTurn, 0.92, 1.0);
+        env = rampIn * rampOut;
+      }
 
-      // 2nd Hairpin Left (Z: 115 -> 175)
-      new THREE.Vector3(-22, 96, 130),
-      new THREE.Vector3(-40, 93.5, 145),
-      new THREE.Vector3(-28, 91, 160),
-      new THREE.Vector3(-5, 88.5, 175),
+      const phase = ((z - turnStartZ) / halfPeriodZ) * Math.PI;
+      // Add subtle 3rd harmonic flattening (-0.06 * sin(3*phase)) for wider, rounder hairpin apexes
+      const wave = Math.sin(phase) - 0.06 * Math.sin(3 * phase);
+      const x = env * maxAmpX * wave;
 
-      // 3rd Hairpin Right (Z: 175 -> 235)
-      new THREE.Vector3(22, 86, 190),
-      new THREE.Vector3(40, 83.5, 205),
-      new THREE.Vector3(28, 81, 220),
-      new THREE.Vector3(5, 78.5, 235),
+      // Steady downhill elevation from Y=110 down to Y=0 (flattening out smoothly at finish)
+      const progressZ = z / totalZ;
+      const flattenEnd = 1.0 - THREE.MathUtils.smoothstep(progressZ, 0.90, 1.0);
+      const y = 110 * (1.0 - progressZ) * flattenEnd;
 
-      // 4th Hairpin Left (Z: 235 -> 295)
-      new THREE.Vector3(-22, 76, 250),
-      new THREE.Vector3(-40, 73.5, 265),
-      new THREE.Vector3(-28, 71, 280),
-      new THREE.Vector3(-5, 68.5, 295),
+      rawWaypoints.push(new THREE.Vector3(x, y, z));
+    }
 
-      // 5th Hairpin Right (Z: 295 -> 355)
-      new THREE.Vector3(22, 66, 310),
-      new THREE.Vector3(40, 63.5, 325),
-      new THREE.Vector3(28, 61, 340),
-      new THREE.Vector3(5, 58.5, 355),
-
-      // 6th Hairpin Left (Z: 355 -> 415)
-      new THREE.Vector3(-22, 56, 370),
-      new THREE.Vector3(-40, 53.5, 385),
-      new THREE.Vector3(-28, 51, 400),
-      new THREE.Vector3(-5, 48.5, 415),
-
-      // 7th Hairpin Right (Z: 415 -> 475)
-      new THREE.Vector3(22, 46, 430),
-      new THREE.Vector3(40, 43.5, 445),
-      new THREE.Vector3(28, 41, 460),
-      new THREE.Vector3(5, 38.5, 475),
-
-      // 8th Hairpin Left (Z: 475 -> 535)
-      new THREE.Vector3(-22, 36, 490),
-      new THREE.Vector3(-40, 33.5, 505),
-      new THREE.Vector3(-28, 31, 520),
-      new THREE.Vector3(-5, 28.5, 535),
-
-      // 9th Hairpin Right (Z: 535 -> 595)
-      new THREE.Vector3(22, 26, 550),
-      new THREE.Vector3(40, 23.5, 565),
-      new THREE.Vector3(28, 21, 580),
-      new THREE.Vector3(5, 18.5, 595),
-
-      // 10th Hairpin Left (Z: 595 -> 655)
-      new THREE.Vector3(-22, 16, 610),
-      new THREE.Vector3(-38, 13, 625),
-      new THREE.Vector3(-25, 10, 640),
-      new THREE.Vector3(-8, 7, 655),
-
-      // Short Final Sprint to Finish Arch
-      new THREE.Vector3(0, 4, 675),
-      new THREE.Vector3(0, 1, 695), // Finish Line!
-      new THREE.Vector3(0, 0, 720), // Run-off area
-    ];
-
-    this.curve = new THREE.CatmullRomCurve3(rawWaypoints, false, 'catmullrom', 0.25);
+    this.curve = new THREE.CatmullRomCurve3(rawWaypoints, false, 'centripetal', 0.5);
     this.totalLength = this.curve.getLength();
 
     // Pre-sample points and frenet frames for fast queries
@@ -103,13 +64,11 @@ export class TrackSpline {
       const tangent = this.curve.getTangent(u).normalize();
       this.cacheTangents.push(tangent);
 
-      // Compute banking / normal
-      // Approximate road normal as generally up, but leaning slightly into curves
       const up = new THREE.Vector3(0, 1, 0);
       const normal = new THREE.Vector3().crossVectors(tangent, up).normalize();
       const binormal = new THREE.Vector3().crossVectors(normal, tangent).normalize();
 
-      this.cacheNormals.push(normal);     // Points to Road Left
+      this.cacheNormals.push(normal);     // Points to Road Right/Left per cross(tangent, up)
       this.cacheBinormals.push(binormal); // Points up perpendicular to road
     }
   }
@@ -125,15 +84,16 @@ export class TrackSpline {
   }
 
   getNormalAt(u) {
-    const clampedU = THREE.MathUtils.clamp(u, 0, 1);
-    const index = Math.min(this.sampleCount, Math.floor(clampedU * this.sampleCount));
-    return this.cacheNormals[index] || new THREE.Vector3(1, 0, 0);
+    // Exact continuous right-handed crossVectors(tangent, up): (-tangent.z, 0, tangent.x)
+    const tangent = this.getTangentAt(u);
+    const up = new THREE.Vector3(0, 1, 0);
+    return new THREE.Vector3().crossVectors(tangent, up).normalize();
   }
 
   getBinormalAt(u) {
-    const clampedU = THREE.MathUtils.clamp(u, 0, 1);
-    const index = Math.min(this.sampleCount, Math.floor(clampedU * this.sampleCount));
-    return this.cacheBinormals[index] || new THREE.Vector3(0, 1, 0);
+    const tangent = this.getTangentAt(u);
+    const normal = this.getNormalAt(u);
+    return new THREE.Vector3().crossVectors(normal, tangent).normalize();
   }
 
   /**

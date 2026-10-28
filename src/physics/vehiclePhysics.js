@@ -52,8 +52,8 @@ export class VehiclePhysics {
     this.steerInput = 0;       // -1 (Left) to +1 (Right)
     this.throttleInput = 0;    // -1 (Brake) to +1 (Boost)
 
-    // Boundaries & Feel
-    this.guardRailLimit = GAME_CONSTANTS.TRACK.GUARD_RAIL_OFFSET - 1.0;
+    // Boundaries & Feel (keep angled truck body & wheels cleanly inside the guardrail)
+    this.guardRailLimit = GAME_CONSTANTS.TRACK.GUARD_RAIL_OFFSET - 1.55;
     this.bumpCooldown = 0;
 
     this.resetToStart();
@@ -173,7 +173,7 @@ export class VehiclePhysics {
     const distAhead = Math.max(1.0, (uAhead - this.progressU) * this.track.totalLength);
     const roadCurvature = dTrackYaw / distAhead;
     const roadYawRate = roadCurvature * this.speed;
-    const feedforwardYawRate = roadYawRate * 0.88; // 88% road curve auto-follow for dense switchbacks
+    const feedforwardYawRate = roadYawRate * 0.92; // 92% road curve auto-follow for dense switchbacks
 
     // B. Drift detection
     const steerDeflection = Math.abs(this.steerInput);

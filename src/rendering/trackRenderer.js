@@ -16,7 +16,7 @@ export class TrackRenderer {
   }
 
   buildRoadMesh() {
-    const segments = 400;
+    const segments = 640;
     const roadWidth = GAME_CONSTANTS.TRACK.WIDTH;
     const halfW = roadWidth / 2;
 
@@ -24,11 +24,11 @@ export class TrackRenderer {
     const uvs = [];
     const indices = [];
 
-    // Road ribbon vertices
+    // Road ribbon vertices with continuous smooth normals
     for (let i = 0; i <= segments; i++) {
       const u = i / segments;
       const center = this.track.getPointAt(u);
-      const normal = this.track.getNormalAt(u); // road left
+      const normal = this.track.getNormalAt(u);
 
       const leftPt = new THREE.Vector3().copy(center).addScaledVector(normal, -halfW);
       const rightPt = new THREE.Vector3().copy(center).addScaledVector(normal, halfW);
@@ -59,49 +59,55 @@ export class TrackRenderer {
     const roadMat = new THREE.MeshLambertMaterial({
       color: GAME_CONSTANTS.COLORS.ROAD_ASPHALT,
       roughness: 0.8,
+      side: THREE.DoubleSide,
     });
 
     const roadMesh = new THREE.Mesh(roadGeo, roadMat);
     roadMesh.receiveShadow = true;
     this.group.add(roadMesh);
 
-    // Yellow Center Dashed Line Ribbon
-    this.buildCenterDashedLine(segments);
+    // Yellow Center Dashed Line Ribbon (proper independent dash quads)
+    this.buildCenterDashedLine(320);
   }
 
-  buildCenterDashedLine(segments) {
+  buildCenterDashedLine(dashSlots) {
     const vertices = [];
     const indices = [];
-    const halfLineW = 0.25;
+    const halfLineW = 0.22;
 
-    for (let i = 0; i <= segments; i++) {
-      // Dashes: draw for 2 steps, skip 1 step
-      if ((i % 4) === 3) continue;
+    for (let i = 0; i < dashSlots; i++) {
+      // Draw a dash on even slots, leave a clean gap on odd slots
+      if (i % 2 === 1) continue;
 
-      const u = i / segments;
-      const center = this.track.getPointAt(u);
-      const normal = this.track.getNormalAt(u);
-
-      const leftPt = new THREE.Vector3().copy(center).addScaledVector(normal, -halfLineW);
-      const rightPt = new THREE.Vector3().copy(center).addScaledVector(normal, halfLineW);
-
-      leftPt.y += 0.04; // Slightly above road to prevent z-fighting
-      rightPt.y += 0.04;
+      const u0 = i / dashSlots;
+      const uMid = (i + 0.5) / dashSlots;
+      const u1 = (i + 1.0) / dashSlots;
+      const sampleUs = [u0, uMid, u1];
 
       const baseIdx = vertices.length / 3;
-      vertices.push(leftPt.x, leftPt.y, leftPt.z);
-      vertices.push(rightPt.x, rightPt.y, rightPt.z);
+      for (const u of sampleUs) {
+        const center = this.track.getPointAt(u);
+        const normal = this.track.getNormalAt(u);
 
-      if (i < segments && (i % 4) < 2) {
+        const leftPt = new THREE.Vector3().copy(center).addScaledVector(normal, -halfLineW);
+        const rightPt = new THREE.Vector3().copy(center).addScaledVector(normal, halfLineW);
+
+        leftPt.y += 0.04;
+        rightPt.y += 0.04;
+
         vertices.push(leftPt.x, leftPt.y, leftPt.z);
         vertices.push(rightPt.x, rightPt.y, rightPt.z);
       }
-    }
 
-    // Connect sequential pairs
-    for (let i = 0; i < (vertices.length / 3) - 2; i += 2) {
-      indices.push(i, i + 1, i + 2);
-      indices.push(i + 1, i + 3, i + 2);
+      // Two quads per dash so it curves smoothly with the road without bridging across gaps
+      for (let s = 0; s < 2; s++) {
+        const v0 = baseIdx + s * 2;
+        const v1 = v0 + 1;
+        const v2 = v0 + 2;
+        const v3 = v0 + 3;
+        indices.push(v0, v1, v2);
+        indices.push(v1, v3, v2);
+      }
     }
 
     const lineGeo = new THREE.BufferGeometry();
@@ -111,6 +117,7 @@ export class TrackRenderer {
 
     const lineMat = new THREE.MeshBasicMaterial({
       color: GAME_CONSTANTS.COLORS.ROAD_LINE_YELLOW,
+      side: THREE.DoubleSide,
     });
 
     const lineMesh = new THREE.Mesh(lineGeo, lineMat);
@@ -119,40 +126,75 @@ export class TrackRenderer {
 
   buildGuardrails() {
     const railOffset = GAME_CONSTANTS.TRACK.GUARD_RAIL_OFFSET;
-    const segments = 350;
+    const segments = 560;
+    const radialSegments = 6;
+    const tubeRadius = 0.16;
 
     const railMat = new THREE.MeshLambertMaterial({
       color: GAME_CONSTANTS.COLORS.GUARD_RAIL,
     });
 
-    // Build left and right rails
+    // Build twist-free left and right guardrail beams using road-aligned (normal, binormal) frames
     [-railOffset, railOffset].forEach((offset) => {
-      const railCurvePts = [];
+      const vertices = [];
+      const indices = [];
+
       for (let i = 0; i <= segments; i++) {
         const u = i / segments;
-        const pt = this.track.getWorldPosition(u, offset, 0.7);
-        railCurvePts.push(pt);
+        const center = this.track.getWorldPosition(u, offset, 0.72);
+        const normal = this.track.getNormalAt(u);
+        const binormal = this.track.getBinormalAt(u);
+
+        for (let r = 0; r < radialSegments; r++) {
+          const angle = (r / radialSegments) * Math.PI * 2;
+          const cosA = Math.cos(angle) * tubeRadius;
+          const sinA = Math.sin(angle) * tubeRadius;
+
+          const vx = center.x + normal.x * cosA + binormal.x * sinA;
+          const vy = center.y + normal.y * cosA + binormal.y * sinA;
+          const vz = center.z + normal.z * cosA + binormal.z * sinA;
+          vertices.push(vx, vy, vz);
+        }
+
+        if (i < segments) {
+          const ring0 = i * radialSegments;
+          const ring1 = (i + 1) * radialSegments;
+          for (let r = 0; r < radialSegments; r++) {
+            const nextR = (r + 1) % radialSegments;
+            const a = ring0 + r;
+            const b = ring1 + r;
+            const c = ring1 + nextR;
+            const d = ring0 + nextR;
+            indices.push(a, b, d);
+            indices.push(b, c, d);
+          }
+        }
       }
 
-      const railCurve = new THREE.CatmullRomCurve3(railCurvePts);
-      const railGeo = new THREE.TubeGeometry(railCurve, segments, 0.16, 6, false);
+      const railGeo = new THREE.BufferGeometry();
+      railGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      railGeo.setIndex(indices);
+      railGeo.computeVertexNormals();
+
       const railMesh = new THREE.Mesh(railGeo, railMat);
       railMesh.castShadow = true;
       this.group.add(railMesh);
 
       // Add vertical posts every 4 segments
-      const postGeo = new THREE.CylinderGeometry(0.12, 0.12, 1.2, 6);
-      const postInstanced = new THREE.InstancedMesh(postGeo, railMat, Math.floor(segments / 3));
+      const postStep = 4;
+      const postGeo = new THREE.CylinderGeometry(0.11, 0.11, 1.1, 6);
+      const postInstanced = new THREE.InstancedMesh(postGeo, railMat, Math.ceil((segments + 1) / postStep));
       const dummy = new THREE.Object3D();
 
       let postCount = 0;
-      for (let i = 0; i < segments; i += 3) {
+      for (let i = 0; i <= segments; i += postStep) {
         const u = i / segments;
-        const pt = this.track.getWorldPosition(u, offset, 0.5);
+        const pt = this.track.getWorldPosition(u, offset, 0.45);
         dummy.position.copy(pt);
         dummy.updateMatrix();
         postInstanced.setMatrixAt(postCount++, dummy.matrix);
       }
+      postInstanced.count = postCount;
       postInstanced.instanceMatrix.needsUpdate = true;
       postInstanced.castShadow = true;
       this.group.add(postInstanced);

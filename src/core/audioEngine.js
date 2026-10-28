@@ -20,9 +20,11 @@ export class AudioEngine {
     this.tireFilter = null;
     this.tireGain = null;
 
-    // BGM timer
+    // BGM timer & state
     this.bgmTimer = null;
     this.isMuted = false;
+    this.currentSong = 'Für Elise (給愛麗絲)';
+    this.bgmNotesPlayed = 0;
   }
 
   init() {
@@ -33,15 +35,16 @@ export class AudioEngine {
     this.ctx = new AudioContextClass();
 
     this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
+    this.masterGain.gain.setValueAtTime(0.65, this.ctx.currentTime);
     this.masterGain.connect(this.ctx.destination);
 
     this.sfxGain = this.ctx.createGain();
-    this.sfxGain.gain.setValueAtTime(0.8, this.ctx.currentTime);
+    this.sfxGain.gain.setValueAtTime(0.75, this.ctx.currentTime);
     this.sfxGain.connect(this.masterGain);
 
+    // Gentle, soft volume for Taiwan garbage truck Für Elise music box (-17 dB bus gain)
     this.bgmGain = this.ctx.createGain();
-    this.bgmGain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+    this.bgmGain.gain.setValueAtTime(0.14, this.ctx.currentTime);
     this.bgmGain.connect(this.masterGain);
 
     this.setupEngineSynth();
@@ -227,33 +230,105 @@ export class AudioEngine {
   startBgm() {
     if (this.bgmTimer || !this.ctx) return;
 
-    // Upbeat pastel pentatonic arpeggio (C Major Pentatonic: C4, D4, E4, G4, A4)
-    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    const pattern = [0, 2, 4, 2, 3, 1, 4, 3, 0, 3, 2, 5];
-    let step = 0;
-
-    const playNote = () => {
-      if (!this.ctx || !this.isUnlocked || this.isMuted) return;
-      const now = this.ctx.currentTime;
-      const freq = scale[pattern[step % pattern.length]];
-      step++;
-
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-
-      osc.connect(gain);
-      gain.connect(this.bgmGain);
-
-      osc.start(now);
-      osc.stop(now + 0.25);
+    // 台灣垃圾車經典名曲：《給愛麗絲》(Beethoven - Für Elise) 電子音樂盒版
+    const N = {
+      REST: 0,
+      C4: 261.63,
+      E4: 329.63,
+      F4: 349.23,
+      G4: 392.00,
+      Gs4: 415.30,
+      A4: 440.00,
+      B4: 493.88,
+      C5: 523.25,
+      D5: 587.33,
+      Ds5: 622.25,
+      E5: 659.25,
+      F5: 698.46,
     };
 
-    this.bgmTimer = setInterval(playNote, 250); // 120 BPM 8th notes
+    // Each entry: [frequency, durationInSteps] (1 step = 170ms)
+    const melody = [
+      // Phrase A1: E5 D#5 E5 D#5 E5 B4 D5 C5 | A4 . C4 E4 A4 | B4 . E4 G#4 B4 | C5 . E4
+      [N.E5, 1], [N.Ds5, 1], [N.E5, 1], [N.Ds5, 1], [N.E5, 1], [N.B4, 1], [N.D5, 1], [N.C5, 1],
+      [N.A4, 2], [N.REST, 1], [N.C4, 1], [N.E4, 1], [N.A4, 1],
+      [N.B4, 2], [N.REST, 1], [N.E4, 1], [N.Gs4, 1], [N.B4, 1],
+      [N.C5, 2], [N.REST, 1], [N.E4, 1],
+
+      // Phrase A2: E5 D#5 E5 D#5 E5 B4 D5 C5 | A4 . C4 E4 A4 | B4 . E4 C5 B4 | A4 . .
+      [N.E5, 1], [N.Ds5, 1], [N.E5, 1], [N.Ds5, 1], [N.E5, 1], [N.B4, 1], [N.D5, 1], [N.C5, 1],
+      [N.A4, 2], [N.REST, 1], [N.C4, 1], [N.E4, 1], [N.A4, 1],
+      [N.B4, 2], [N.REST, 1], [N.E4, 1], [N.C5, 1], [N.B4, 1],
+      [N.A4, 3], [N.REST, 1],
+
+      // Phrase B (Cheerful C-major bridge): B4 C5 D5 | E5 . G4 F5 E5 | D5 . F4 E5 D5 | C5 . E4 D5 C5 | B4 . .
+      [N.B4, 1], [N.C5, 1], [N.D5, 1],
+      [N.E5, 2], [N.REST, 1], [N.G4, 1], [N.F5, 1], [N.E5, 1],
+      [N.D5, 2], [N.REST, 1], [N.F4, 1], [N.E5, 1], [N.D5, 1],
+      [N.C5, 2], [N.REST, 1], [N.E4, 1], [N.D5, 1], [N.C5, 1],
+      [N.B4, 2], [N.REST, 1],
+    ];
+
+    let noteIdx = 0;
+    let waitSteps = 0;
+    const stepSec = 0.17;
+
+    const tickMusicBox = () => {
+      if (!this.ctx || !this.isUnlocked || this.isMuted) return;
+
+      if (waitSteps > 0) {
+        waitSteps--;
+        return;
+      }
+
+      const [freq, steps] = melody[noteIdx % melody.length];
+      noteIdx++;
+      waitSteps = Math.max(0, steps - 1);
+
+      if (freq <= 0) return;
+
+      this.bgmNotesPlayed++;
+      const now = this.ctx.currentTime;
+      const dur = steps * stepSec * 1.15;
+
+      // Warm electronic music-box chime (triangle fundamental + soft sine octave harmonic)
+      const oscMain = this.ctx.createOscillator();
+      const oscChime = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gainMain = this.ctx.createGain();
+      const gainChime = this.ctx.createGain();
+
+      oscMain.type = 'triangle';
+      oscMain.frequency.setValueAtTime(freq, now);
+
+      oscChime.type = 'sine';
+      oscChime.frequency.setValueAtTime(freq * 2, now);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(2200, now);
+
+      // Soft, pleasant volume envelope (聲音不用太大)
+      gainMain.gain.setValueAtTime(0.001, now);
+      gainMain.gain.linearRampToValueAtTime(0.065, now + 0.012);
+      gainMain.gain.exponentialRampToValueAtTime(0.0005, now + dur);
+
+      gainChime.gain.setValueAtTime(0.001, now);
+      gainChime.gain.linearRampToValueAtTime(0.016, now + 0.008);
+      gainChime.gain.exponentialRampToValueAtTime(0.0002, now + dur * 0.65);
+
+      oscMain.connect(gainMain);
+      oscChime.connect(gainChime);
+      gainMain.connect(filter);
+      gainChime.connect(filter);
+      filter.connect(this.bgmGain);
+
+      oscMain.start(now);
+      oscChime.start(now);
+      oscMain.stop(now + dur + 0.02);
+      oscChime.stop(now + dur + 0.02);
+    };
+
+    this.bgmTimer = setInterval(tickMusicBox, stepSec * 1000);
   }
 
   stopBgm() {
