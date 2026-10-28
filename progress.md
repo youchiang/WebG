@@ -172,3 +172,15 @@ d:\AGYWorkspace\WebG\
 - **Check 3 撞擊不扣速與無定格**：撞前 `38.0`，撞時 `38.0`（保持率 `100.0%`，`hitStop = 0s`，**PASS**）
 - **Check 5 菜渣色塊與 1 秒移除**：成功產生菜渣色塊元素、1 秒後自動從 DOM 移除、無舊文字彈窗（**PASS**）
 - **Check 7 7 連髮夾彎零轉向巡航完賽**：`wallHits = 7` 次順利抵達終點 `FINISHED`（**PASS**）
+
+---
+
+## 10 連環緊湊髮夾彎、賽道總長縮減 50% 與移除菜渣色塊 (Phase 5 Update)
+
+### 🛠️ 修改項目明細
+1. **更多彎道 (`src/physics/trackSpline.js`)**：
+   - 將山路彎道由 7 個擴充為 **10 個連續緊湊的 180° 髮夾彎**（左右連續折返，彎道密度提升約 3 倍），並將曲率前饋輔助提升至 `0.88`，連續急彎依然流暢好上手。
+2. **總長減少 (`src/physics/trackSpline.js`, `src/core/constants.js`)**：
+   - 將賽道縱深由 `Z: 0 -> 1750` 縮短為 `Z: 0 -> 720`，總長由約 `2,348m` 縮減約 **50%** 至 `1,170m`（全程完賽時間由約 80 秒濃縮至約 36 秒，節奏更緊湊刺激）。
+3. **移除菜渣色塊 (`src/main.js`, `src/rendering/particleSystem.js`, `src/ui/style.css`)**：
+   - 徹底移除 `showVeggieSplat()`、`.veggie-splat-group` 與 `.veggie-scrap`，垃圾袋甩飛時僅呈現純 3D 實體黑色垃圾袋拋物線飛出效果，畫面乾淨清爽。

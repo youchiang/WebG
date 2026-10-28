@@ -7,10 +7,10 @@ export const GAME_CONSTANTS = {
   TRACK: {
     WIDTH: 14,                  // Total road width in units
     GUARD_RAIL_OFFSET: 7.2,     // Distance from centerline to guardrail
-    SEGMENTS: 300,              // Spline resolution points (300 for fine hairpin sampling)
-    SUMMIT_ELEVATION: 180,      // Summit height in units (Y axis)
+    SEGMENTS: 320,              // Spline resolution points (320 for 10 compact hairpins)
+    SUMMIT_ELEVATION: 115,      // Summit height in units (Y axis)
     BASE_ELEVATION: 0,          // Base/finish height in units
-    TOTAL_LENGTH_APPROX: 2400,  // Approx length with 7 hairpins
+    TOTAL_LENGTH_APPROX: 1170,  // Compact total length (~50% shorter) with 10 continuous hairpins
   },
 
   // Vehicle physics tuning

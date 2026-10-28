@@ -19,75 +19,78 @@ export class TrackSpline {
   }
 
   initSpline() {
-    // Design a thrilling, scenic mountain pass with 7 continuous large-radius 180° hairpins (秋名山連環髮夾彎)
-    // Coordinate system: X = lateral (-105 to +105), Y = altitude (180 down to 0), Z = progression forward
+    // Compact, action-packed mountain pass with 10 continuous tight hairpin/switchback turns (~1,170m total length)
+    // Coordinate system: X = lateral (-40 to +40), Y = altitude (115 down to 0), Z = progression forward (0 to 720)
     const rawWaypoints = [
-      // Summit Start Area
-      new THREE.Vector3(0, 180, 0),
-      new THREE.Vector3(5, 176, 40),
-      new THREE.Vector3(15, 172, 80),
+      // Summit Start Area (steady downhill pitch for clean launch)
+      new THREE.Vector3(0, 115, 0),
+      new THREE.Vector3(3, 112, 28),
+      new THREE.Vector3(10, 109, 55),
 
-      // 1st Hairpin Right (Switchback 1: swinging out to X: +105, 180° U-turn)
-      new THREE.Vector3(50, 166, 120),
-      new THREE.Vector3(85, 160, 160),
-      new THREE.Vector3(105, 154, 200),
-      new THREE.Vector3(95, 148, 240),
-      new THREE.Vector3(60, 142, 270),
-      new THREE.Vector3(10, 136, 300),
+      // 1st Hairpin Right (Z: 55 -> 115)
+      new THREE.Vector3(28, 106, 70),
+      new THREE.Vector3(40, 103.5, 85),
+      new THREE.Vector3(28, 101, 100),
+      new THREE.Vector3(5, 98.5, 115),
 
-      // 2nd Hairpin Left (Switchback 2: swinging out to X: -105, 180° U-turn)
-      new THREE.Vector3(-40, 130, 330),
-      new THREE.Vector3(-80, 125, 360),
-      new THREE.Vector3(-105, 120, 400),
-      new THREE.Vector3(-95, 115, 440),
-      new THREE.Vector3(-60, 110, 470),
-      new THREE.Vector3(-10, 105, 500),
+      // 2nd Hairpin Left (Z: 115 -> 175)
+      new THREE.Vector3(-22, 96, 130),
+      new THREE.Vector3(-40, 93.5, 145),
+      new THREE.Vector3(-28, 91, 160),
+      new THREE.Vector3(-5, 88.5, 175),
 
-      // 3rd Hairpin Right (Switchback 3: swinging out to X: +105, 180° U-turn)
-      new THREE.Vector3(40, 100, 530),
-      new THREE.Vector3(80, 95, 560),
-      new THREE.Vector3(105, 90, 600),
-      new THREE.Vector3(95, 85, 640),
-      new THREE.Vector3(60, 80, 670),
-      new THREE.Vector3(10, 75, 700),
+      // 3rd Hairpin Right (Z: 175 -> 235)
+      new THREE.Vector3(22, 86, 190),
+      new THREE.Vector3(40, 83.5, 205),
+      new THREE.Vector3(28, 81, 220),
+      new THREE.Vector3(5, 78.5, 235),
 
-      // 4th Hairpin Left (Switchback 4: swinging out to X: -105, 180° U-turn)
-      new THREE.Vector3(-40, 70, 730),
-      new THREE.Vector3(-80, 65, 760),
-      new THREE.Vector3(-105, 60, 800),
-      new THREE.Vector3(-95, 55, 840),
-      new THREE.Vector3(-60, 50, 870),
-      new THREE.Vector3(-10, 45, 900),
+      // 4th Hairpin Left (Z: 235 -> 295)
+      new THREE.Vector3(-22, 76, 250),
+      new THREE.Vector3(-40, 73.5, 265),
+      new THREE.Vector3(-28, 71, 280),
+      new THREE.Vector3(-5, 68.5, 295),
 
-      // 5th Hairpin Right (Switchback 5: swinging out to X: +105, 180° U-turn)
-      new THREE.Vector3(40, 40, 930),
-      new THREE.Vector3(80, 36, 960),
-      new THREE.Vector3(105, 32, 1000),
-      new THREE.Vector3(95, 28, 1040),
-      new THREE.Vector3(60, 24, 1070),
-      new THREE.Vector3(10, 20, 1100),
+      // 5th Hairpin Right (Z: 295 -> 355)
+      new THREE.Vector3(22, 66, 310),
+      new THREE.Vector3(40, 63.5, 325),
+      new THREE.Vector3(28, 61, 340),
+      new THREE.Vector3(5, 58.5, 355),
 
-      // 6th Hairpin Left (Switchback 6: swinging out to X: -105, 180° U-turn)
-      new THREE.Vector3(-40, 17, 1130),
-      new THREE.Vector3(-80, 14, 1160),
-      new THREE.Vector3(-105, 11, 1200),
-      new THREE.Vector3(-95, 8, 1240),
-      new THREE.Vector3(-60, 6, 1270),
-      new THREE.Vector3(-10, 4, 1300),
+      // 6th Hairpin Left (Z: 355 -> 415)
+      new THREE.Vector3(-22, 56, 370),
+      new THREE.Vector3(-40, 53.5, 385),
+      new THREE.Vector3(-28, 51, 400),
+      new THREE.Vector3(-5, 48.5, 415),
 
-      // 7th Hairpin Right (Switchback 7: swinging out to X: +100, 180° U-turn)
-      new THREE.Vector3(40, 3, 1330),
-      new THREE.Vector3(80, 2, 1365),
-      new THREE.Vector3(100, 1, 1405),
-      new THREE.Vector3(85, 0.5, 1445),
-      new THREE.Vector3(50, 0, 1475),
+      // 7th Hairpin Right (Z: 415 -> 475)
+      new THREE.Vector3(22, 46, 430),
+      new THREE.Vector3(40, 43.5, 445),
+      new THREE.Vector3(28, 41, 460),
+      new THREE.Vector3(5, 38.5, 475),
 
-      // Final Straight descent & Grandstands towards Finish Arch
-      new THREE.Vector3(20, 0, 1520),
-      new THREE.Vector3(10, 0, 1580),
-      new THREE.Vector3(5, 0, 1640),
-      new THREE.Vector3(0, 0, 1700), // Finish Line!
-      new THREE.Vector3(0, 0, 1750), // Run-off area
+      // 8th Hairpin Left (Z: 475 -> 535)
+      new THREE.Vector3(-22, 36, 490),
+      new THREE.Vector3(-40, 33.5, 505),
+      new THREE.Vector3(-28, 31, 520),
+      new THREE.Vector3(-5, 28.5, 535),
+
+      // 9th Hairpin Right (Z: 535 -> 595)
+      new THREE.Vector3(22, 26, 550),
+      new THREE.Vector3(40, 23.5, 565),
+      new THREE.Vector3(28, 21, 580),
+      new THREE.Vector3(5, 18.5, 595),
+
+      // 10th Hairpin Left (Z: 595 -> 655)
+      new THREE.Vector3(-22, 16, 610),
+      new THREE.Vector3(-38, 13, 625),
+      new THREE.Vector3(-25, 10, 640),
+      new THREE.Vector3(-8, 7, 655),
+
+      // Short Final Sprint to Finish Arch
+      new THREE.Vector3(0, 4, 675),
+      new THREE.Vector3(0, 1, 695), // Finish Line!
+      new THREE.Vector3(0, 0, 720), // Run-off area
     ];
 
     this.curve = new THREE.CatmullRomCurve3(rawWaypoints, false, 'catmullrom', 0.25);

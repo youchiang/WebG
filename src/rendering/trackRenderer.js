@@ -173,18 +173,18 @@ export class TrackRenderer {
 
     const trackSamplePoints = this.track.cachePoints;
 
-    // Mountain cones along the descent, pushed further out to frame the road
+    // Mountain cones along the compact descent (Z: 0 -> 720), pushed out to frame the 10 hairpins
     const peaks = [
       // Left side mountain ridges
-      { x: -240, y: 150, z: 80, r: 180, h: 220 },
-      { x: -260, y: 110, z: 320, r: 200, h: 200 },
-      { x: -250, y: 70, z: 580, r: 210, h: 190 },
-      { x: -220, y: 30, z: 850, r: 190, h: 160 },
+      { x: -195, y: 95, z: 60, r: 145, h: 185 },
+      { x: -205, y: 70, z: 220, r: 155, h: 175 },
+      { x: -200, y: 45, z: 400, r: 155, h: 165 },
+      { x: -185, y: 20, z: 580, r: 145, h: 145 },
       // Right side mountain ridges
-      { x: 250, y: 140, z: 180, r: 190, h: 230 },
-      { x: 270, y: 100, z: 420, r: 200, h: 210 },
-      { x: 260, y: 60, z: 700, r: 200, h: 180 },
-      { x: 230, y: 20, z: 980, r: 180, h: 150 },
+      { x: 195, y: 90, z: 120, r: 145, h: 190 },
+      { x: 205, y: 65, z: 300, r: 155, h: 180 },
+      { x: 200, y: 40, z: 480, r: 155, h: 160 },
+      { x: 185, y: 15, z: 640, r: 145, h: 140 },
     ];
 
     peaks.forEach((p, idx) => {

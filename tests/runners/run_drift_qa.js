@@ -474,21 +474,20 @@ async function runDriftQA() {
 
     const bagsLostValid = splatTestResult.bagsLost > 0;
     const noOldTextValid = !splatTestResult.hasOldText;
-    const veggieTelemetryValid = splatTestResult.veggieSplatsTelemetry > 0 || splatTestResult.splatDetectedInDOM;
-    const autoRemoveValid = splatTestResult.splatDisappeared;
+    const noVeggieSplatValid = !splatTestResult.splatDetectedInDOM && splatTestResult.veggieSplatsTelemetry === 0;
 
-    const check5Pass = bagsLostValid && noOldTextValid && (veggieTelemetryValid || splatTestResult.splatDetectedInDOM);
+    const check5Pass = bagsLostValid && noOldTextValid && noVeggieSplatValid;
     const check5Detail = check5Pass
-      ? `PASS: 甩出 ${splatTestResult.bagsLost} 袋垃圾，無舊文字彈窗，veggieSplats=${splatTestResult.veggieSplatsTelemetry}，色塊1秒後已消失`
-      : `FAIL: 菜渣色塊/舊文字檢驗失敗 (bagsLost=${splatTestResult.bagsLost}, hasOldText=${splatTestResult.hasOldText}, veggieSplats=${splatTestResult.veggieSplatsTelemetry}, disappeared=${splatTestResult.splatDisappeared})`;
+      ? `PASS: 甩出 ${splatTestResult.bagsLost} 袋垃圾，無文字彈窗且已徹底移除菜渣色塊 (DOM splats=0)`
+      : `FAIL: 垃圾袋/無色塊檢驗失敗 (bagsLost=${splatTestResult.bagsLost}, hasOldText=${splatTestResult.hasOldText}, splatInDOM=${splatTestResult.splatDetectedInDOM})`;
 
     if (check5Pass) console.log('✅ ' + check5Detail);
     else console.error('❌ ' + check5Detail);
 
     testResults.push({
       id: 5,
-      name: '垃圾袋甩飛與菜渣色塊 (Veggie Splat)',
-      threshold: '無舊文字彈窗，觸發菜渣色塊且 1s 後自動消逝',
+      name: '垃圾袋純物理甩飛 (無提示與無菜渣色塊)',
+      threshold: '甩出垃圾袋 > 0 且無文字彈窗、無菜渣色塊',
       detail: check5Detail,
       pass: check5Pass,
     });

@@ -33,7 +33,6 @@ export class ParticleSystem {
 
     this.dummy = new THREE.Object3D();
     this.smokeTimer = 0;
-    this.veggieSplatsCount = 0;
 
     // 2. Screen Floating Score Text Container
     this.textContainer = document.getElementById('floating-popups-container');
@@ -87,69 +86,6 @@ export class ParticleSystem {
     setTimeout(() => {
       if (el.parentNode) el.parentNode.removeChild(el);
     }, 1100);
-  }
-
-  showVeggieSplat() {
-    this.veggieSplatsCount++;
-    if (!this.textContainer) return;
-
-    const group = document.createElement('div');
-    group.className = 'veggie-splat-group';
-
-    // Random position in central/surrounding screen (15% ~ 85%, 20% ~ 75%)
-    const leftPct = 15 + Math.random() * 70;
-    const topPct = 20 + Math.random() * 55;
-    group.style.left = `${leftPct.toFixed(1)}%`;
-    group.style.top = `${topPct.toFixed(1)}%`;
-
-    // 5 ~ 8 organic vegetable scrap pieces
-    const scrapCount = 5 + Math.floor(Math.random() * 4);
-    const colors = [
-      '#84CC16', // 高麗菜綠
-      '#4D7C0F', // 深菜葉綠
-      '#F97316', // 紅蘿蔔橘
-      '#EF4444', // 番茄紅
-      '#FACC15', // 炒蛋黃
-      '#365314', // 海帶深綠
-      '#CA8A04', // 醬汁金褐
-    ];
-
-    for (let i = 0; i < scrapCount; i++) {
-      const scrap = document.createElement('div');
-      scrap.className = 'veggie-scrap';
-
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const w = 12 + Math.floor(Math.random() * 18);
-      const h = 8 + Math.floor(Math.random() * 14);
-      const rot = (Math.random() - 0.5) * 80;
-      const offsetX = (Math.random() - 0.5) * 48;
-      const offsetY = (Math.random() - 0.5) * 48;
-
-      scrap.style.backgroundColor = color;
-      scrap.style.width = `${w}px`;
-      scrap.style.height = `${h}px`;
-      scrap.style.left = `${offsetX.toFixed(1)}px`;
-      scrap.style.top = `${offsetY.toFixed(1)}px`;
-      scrap.style.transform = `rotate(${rot.toFixed(1)}deg)`;
-
-      // Organic irregular scrap corners
-      const r1 = 30 + Math.floor(Math.random() * 40);
-      const r2 = 30 + Math.floor(Math.random() * 40);
-      const r3 = 30 + Math.floor(Math.random() * 40);
-      const r4 = 30 + Math.floor(Math.random() * 40);
-      scrap.style.borderRadius = `${r1}% ${r2}% ${r3}% ${r4}% / ${r4}% ${r3}% ${r2}% ${r1}%`;
-
-      group.appendChild(scrap);
-    }
-
-    this.textContainer.appendChild(group);
-
-    // Auto remove after 1.0s (1000ms)
-    setTimeout(() => {
-      if (group.parentNode) {
-        group.parentNode.removeChild(group);
-      }
-    }, 1000);
   }
 
   update(dt, vehiclePhysics) {

@@ -173,7 +173,7 @@ export class VehiclePhysics {
     const distAhead = Math.max(1.0, (uAhead - this.progressU) * this.track.totalLength);
     const roadCurvature = dTrackYaw / distAhead;
     const roadYawRate = roadCurvature * this.speed;
-    const feedforwardYawRate = roadYawRate * 0.80; // 80% road curve auto-follow
+    const feedforwardYawRate = roadYawRate * 0.88; // 88% road curve auto-follow for dense switchbacks
 
     // B. Drift detection
     const steerDeflection = Math.abs(this.steerInput);

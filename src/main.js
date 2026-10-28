@@ -70,20 +70,14 @@ class DriftDownhillApp {
         this.cameraController.reset(this.vehiclePhysics);
         this.gsm.state.trashBagsRemaining = 30;
         this.gsm.state.trashBagsLost = 0;
-        this.particleSystem.veggieSplatsCount = 0;
       }
     });
 
-    // Wire Trash Bag Ejection Effects
+    // Wire Trash Bag Ejection Effects (3D physical bag ejection only, no popup or veggie splats)
     this.vehiclePhysics.onTrashBagEjected = (ejectionData) => {
       this.vehicleMesh.ejectTrashBag(ejectionData, this.vehiclePhysics);
       this.gsm.state.trashBagsRemaining = ejectionData.remaining;
       this.gsm.state.trashBagsLost = ejectionData.lost;
-
-      // 65% probability (or at least every 2 bags) trigger screen veggie splatter
-      if (Math.random() < 0.65 || ejectionData.lost % 2 === 1) {
-        this.particleSystem.showVeggieSplat();
-      }
     };
 
     // Setup Testing Hooks for Playwright
@@ -118,7 +112,6 @@ class DriftDownhillApp {
         wallHits: vp.wallHits || 0,
         trashBagsRemaining: vp.trashBagsRemaining !== undefined ? vp.trashBagsRemaining : 30,
         trashBagsLost: vp.trashBagsLost || 0,
-        veggieSplats: this.particleSystem.veggieSplatsCount || 0,
         slipDeg: Number(((Math.abs(vp.slipAngle || 0) * 180) / Math.PI).toFixed(1)),
         maxSlipDeg: Number(((vp.maxSlipAngle || 0) * 180 / Math.PI).toFixed(1)),
         pitchDeg: Number(((vp.pitch || 0) * 180 / Math.PI).toFixed(1)),
