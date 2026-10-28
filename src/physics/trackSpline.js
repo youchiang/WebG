@@ -19,53 +19,75 @@ export class TrackSpline {
   }
 
   initSpline() {
-    // Design a thrilling, scenic mountain pass with hairpins, S-bends, and continuous descent
-    // Coordinate system: X = lateral, Y = altitude (180 down to 0), Z = progression forward
+    // Design a thrilling, scenic mountain pass with 7 continuous large-radius 180° hairpins (秋名山連環髮夾彎)
+    // Coordinate system: X = lateral (-105 to +105), Y = altitude (180 down to 0), Z = progression forward
     const rawWaypoints = [
       // Summit Start Area
       new THREE.Vector3(0, 180, 0),
-      new THREE.Vector3(5, 176, 50),
-      new THREE.Vector3(15, 170, 100),
+      new THREE.Vector3(5, 176, 40),
+      new THREE.Vector3(15, 172, 80),
 
-      // 1st Gentle Right Sweeper
-      new THREE.Vector3(45, 162, 160),
-      new THREE.Vector3(80, 153, 210),
+      // 1st Hairpin Right (Switchback 1: swinging out to X: +105, 180° U-turn)
+      new THREE.Vector3(50, 166, 120),
+      new THREE.Vector3(85, 160, 160),
+      new THREE.Vector3(105, 154, 200),
+      new THREE.Vector3(95, 148, 240),
+      new THREE.Vector3(60, 142, 270),
+      new THREE.Vector3(10, 136, 300),
 
-      // 1st Hairpin Left (180 deg turnaround!)
-      new THREE.Vector3(95, 145, 260),
-      new THREE.Vector3(75, 138, 290),
-      new THREE.Vector3(35, 131, 280),
-      new THREE.Vector3(5, 124, 240),
+      // 2nd Hairpin Left (Switchback 2: swinging out to X: -105, 180° U-turn)
+      new THREE.Vector3(-40, 130, 330),
+      new THREE.Vector3(-80, 125, 360),
+      new THREE.Vector3(-105, 120, 400),
+      new THREE.Vector3(-95, 115, 440),
+      new THREE.Vector3(-60, 110, 470),
+      new THREE.Vector3(-10, 105, 500),
 
-      // Downhill Chute
-      new THREE.Vector3(-25, 117, 210),
-      new THREE.Vector3(-60, 110, 230),
+      // 3rd Hairpin Right (Switchback 3: swinging out to X: +105, 180° U-turn)
+      new THREE.Vector3(40, 100, 530),
+      new THREE.Vector3(80, 95, 560),
+      new THREE.Vector3(105, 90, 600),
+      new THREE.Vector3(95, 85, 640),
+      new THREE.Vector3(60, 80, 670),
+      new THREE.Vector3(10, 75, 700),
 
-      // 2nd Hairpin Right
-      new THREE.Vector3(-90, 102, 270),
-      new THREE.Vector3(-85, 95, 320),
-      new THREE.Vector3(-55, 88, 350),
-      new THREE.Vector3(-15, 81, 370),
+      // 4th Hairpin Left (Switchback 4: swinging out to X: -105, 180° U-turn)
+      new THREE.Vector3(-40, 70, 730),
+      new THREE.Vector3(-80, 65, 760),
+      new THREE.Vector3(-105, 60, 800),
+      new THREE.Vector3(-95, 55, 840),
+      new THREE.Vector3(-60, 50, 870),
+      new THREE.Vector3(-10, 45, 900),
 
-      // High-speed S-Curve (The "Akina" chicane)
-      new THREE.Vector3(30, 74, 410),
-      new THREE.Vector3(65, 67, 460),
-      new THREE.Vector3(40, 60, 520),
-      new THREE.Vector3(-10, 53, 570),
-      new THREE.Vector3(-50, 46, 620),
+      // 5th Hairpin Right (Switchback 5: swinging out to X: +105, 180° U-turn)
+      new THREE.Vector3(40, 40, 930),
+      new THREE.Vector3(80, 36, 960),
+      new THREE.Vector3(105, 32, 1000),
+      new THREE.Vector3(95, 28, 1040),
+      new THREE.Vector3(60, 24, 1070),
+      new THREE.Vector3(10, 20, 1100),
 
-      // 3rd Hairpin Left with Cliff View
-      new THREE.Vector3(-80, 39, 670),
-      new THREE.Vector3(-75, 33, 720),
-      new THREE.Vector3(-40, 27, 750),
-      new THREE.Vector3(10, 21, 760),
+      // 6th Hairpin Left (Switchback 6: swinging out to X: -105, 180° U-turn)
+      new THREE.Vector3(-40, 17, 1130),
+      new THREE.Vector3(-80, 14, 1160),
+      new THREE.Vector3(-105, 11, 1200),
+      new THREE.Vector3(-95, 8, 1240),
+      new THREE.Vector3(-60, 6, 1270),
+      new THREE.Vector3(-10, 4, 1300),
+
+      // 7th Hairpin Right (Switchback 7: swinging out to X: +100, 180° U-turn)
+      new THREE.Vector3(40, 3, 1330),
+      new THREE.Vector3(80, 2, 1365),
+      new THREE.Vector3(100, 1, 1405),
+      new THREE.Vector3(85, 0.5, 1445),
+      new THREE.Vector3(50, 0, 1475),
 
       // Final Straight descent & Grandstands towards Finish Arch
-      new THREE.Vector3(60, 15, 800),
-      new THREE.Vector3(80, 9, 870),
-      new THREE.Vector3(80, 4, 940),
-      new THREE.Vector3(75, 0, 1020), // Finish Line!
-      new THREE.Vector3(70, 0, 1070), // Run-off area
+      new THREE.Vector3(20, 0, 1520),
+      new THREE.Vector3(10, 0, 1580),
+      new THREE.Vector3(5, 0, 1640),
+      new THREE.Vector3(0, 0, 1700), // Finish Line!
+      new THREE.Vector3(0, 0, 1750), // Run-off area
     ];
 
     this.curve = new THREE.CatmullRomCurve3(rawWaypoints, false, 'catmullrom', 0.25);

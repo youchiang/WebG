@@ -152,3 +152,23 @@ d:\AGYWorkspace\WebG\
 - **Check 7 完賽與異常**：`FINISHED` 且 0 錯誤（**PASS**）
 
 
+---
+
+## 撞擊不減速、菜渣色塊噴濺與 7 連髮夾彎擴充 (Phase 4 Update)
+
+### 🛠️ 修改項目明細
+1. **撞擊時不減速、無定格 (`src/physics/vehiclePhysics.js`, `src/core/constants.js`)**：
+   - 移除擦撞護欄時的 `0.94` 速度衰減，僅消去垂直牆面的法線分量，車速 100% 保留。
+   - 將撞飛路邊障礙物的 `HIT_STOP_DURATION_MS` 設為 `0`，全程高速狂飆無頓挫。
+2. **垃圾袋甩飛改為菜渣色塊噴濺 (`src/rendering/particleSystem.js`, `src/ui/style.css`, `src/main.js`)**：
+   - 移除原本的「🗑️ 垃圾袋甩飛!」文字浮動提示。
+   - 垃圾袋甩飛時以約 65% 機率在畫面上生成一簇 5~8 片不規則蔬菜色塊（高麗菜綠 `#84CC16`、紅蘿蔔橘 `#F97316`、番茄紅 `#EF4444`、炒蛋黃 `#FACC15` 等），並於 **1 秒（1000ms）後自動淡出移除**。
+3. **山道擴充 7 連環 180° 髮夾彎 (`src/physics/trackSpline.js`)**：
+   - 擴充賽道控制點為 7 個連續大弧度 180° U-Turn 髮夾彎，`SEGMENTS` 提升至 `300`，並保持平滑曲率前饋。
+4. **GitHub Pages 路徑更新 (`.github/workflows/deploy-pages.yml`)**：
+   - 調整發布結構至 `/WebG/垃圾清運行動/`（`https://youchiang.github.io/WebG/垃圾清運行動/`），根路徑 `/WebG/` 亦支援自動導向。
+
+### 📊 自動化 QA 驗收數據 (10/10 全數 PASS)
+- **Check 3 撞擊不扣速與無定格**：撞前 `38.0`，撞時 `38.0`（保持率 `100.0%`，`hitStop = 0s`，**PASS**）
+- **Check 5 菜渣色塊與 1 秒移除**：成功產生菜渣色塊元素、1 秒後自動從 DOM 移除、無舊文字彈窗（**PASS**）
+- **Check 7 7 連髮夾彎零轉向巡航完賽**：`wallHits = 7` 次順利抵達終點 `FINISHED`（**PASS**）

@@ -156,7 +156,7 @@ export class GameStateManager {
     this.state.totalYeeted++;
 
     this.addTrauma(0.45);
-    this.state.hitStopTimer = (GAME_CONSTANTS.JUICE.HIT_STOP_DURATION_MS || 65) / 1000;
+    this.state.hitStopTimer = (GAME_CONSTANTS.JUICE.HIT_STOP_DURATION_MS || 0) / 1000;
 
     this.emitChange('YEET_EVENT', {
       type: obstacleDef.id,

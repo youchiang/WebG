@@ -61,6 +61,7 @@ class DriftDownhillApp {
         this.cameraController.reset(this.vehiclePhysics);
         this.gsm.state.trashBagsRemaining = 30;
         this.gsm.state.trashBagsLost = 0;
+        this.particleSystem.veggieSplatsCount = 0;
       } else if (event === 'RACE_FINISHED') {
         audioEngine.playFinishFanfare();
       } else if (event === 'RESET') {
@@ -69,6 +70,7 @@ class DriftDownhillApp {
         this.cameraController.reset(this.vehiclePhysics);
         this.gsm.state.trashBagsRemaining = 30;
         this.gsm.state.trashBagsLost = 0;
+        this.particleSystem.veggieSplatsCount = 0;
       }
     });
 
@@ -78,14 +80,9 @@ class DriftDownhillApp {
       this.gsm.state.trashBagsRemaining = ejectionData.remaining;
       this.gsm.state.trashBagsLost = ejectionData.lost;
 
-      // Occasionally show funny score popup
-      if (ejectionData.lost % 3 === 1) {
-        this.particleSystem.showScorePopup(
-          '🗑️ 垃圾袋甩飛!',
-          this.vehiclePhysics.position,
-          this.sceneManager.camera,
-          '#CBD5E1'
-        );
+      // 65% probability (or at least every 2 bags) trigger screen veggie splatter
+      if (Math.random() < 0.65 || ejectionData.lost % 2 === 1) {
+        this.particleSystem.showVeggieSplat();
       }
     };
 
@@ -121,6 +118,7 @@ class DriftDownhillApp {
         wallHits: vp.wallHits || 0,
         trashBagsRemaining: vp.trashBagsRemaining !== undefined ? vp.trashBagsRemaining : 30,
         trashBagsLost: vp.trashBagsLost || 0,
+        veggieSplats: this.particleSystem.veggieSplatsCount || 0,
         slipDeg: Number(((Math.abs(vp.slipAngle || 0) * 180) / Math.PI).toFixed(1)),
         maxSlipDeg: Number(((vp.maxSlipAngle || 0) * 180 / Math.PI).toFixed(1)),
         pitchDeg: Number(((vp.pitch || 0) * 180 / Math.PI).toFixed(1)),

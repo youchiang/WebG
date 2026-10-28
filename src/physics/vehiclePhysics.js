@@ -342,10 +342,8 @@ export class VehiclePhysics {
       if (pushSign * velNormal > 0) {
         this.velocity.addScaledVector(normal, -velNormal);
       }
+      // Slide along wall without speed reduction
       this.travelYaw = currentTrackYaw;
-
-      // Mild speed loss (~0.94), no snap of body yaw
-      this.speed = Math.max(GAME_CONSTANTS.VEHICLE.MIN_SPEED, this.speed * 0.94);
 
       if (this.bumpCooldown <= 0) {
         this.bumpCooldown = 0.35;

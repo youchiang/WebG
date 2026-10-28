@@ -7,10 +7,10 @@ export const GAME_CONSTANTS = {
   TRACK: {
     WIDTH: 14,                  // Total road width in units
     GUARD_RAIL_OFFSET: 7.2,     // Distance from centerline to guardrail
-    SEGMENTS: 200,              // Spline resolution points
+    SEGMENTS: 300,              // Spline resolution points (300 for fine hairpin sampling)
     SUMMIT_ELEVATION: 180,      // Summit height in units (Y axis)
     BASE_ELEVATION: 0,          // Base/finish height in units
-    TOTAL_LENGTH_APPROX: 1800,  // Approx length
+    TOTAL_LENGTH_APPROX: 2400,  // Approx length with 7 hairpins
   },
 
   // Vehicle physics tuning
@@ -129,7 +129,7 @@ export const GAME_CONSTANTS = {
 
   // Screen Feel
   JUICE: {
-    HIT_STOP_DURATION_MS: 40,   // Freeze frame duration on big impact
+    HIT_STOP_DURATION_MS: 0,    // 0ms = no freeze frame on impact for continuous full-speed rush
     MAX_TRAUMA: 1.0,
     TRAUMA_DECAY: 1.8,
     MAX_SHAKE_OFFSET: 0.6,

@@ -34,7 +34,24 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          mkdir -p "pages-dist/垃圾清運行動"
+          cp -r dist/* "pages-dist/垃圾清運行動/"
+          cat << 'EOF' > pages-dist/index.html
+          <!DOCTYPE html>
+          <html lang="zh-TW">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="refresh" content="0; url=./垃圾清運行動/" />
+            <title>垃圾清運行動</title>
+            <script>window.location.replace("./垃圾清運行動/" + window.location.search + window.location.hash);</script>
+          </head>
+          <body>
+            <p>正在前往 <a href="./垃圾清運行動/">垃圾清運行動</a>...</p>
+          </body>
+          </html>
+          EOF
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -42,7 +59,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './pages-dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
